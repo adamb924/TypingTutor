@@ -17,7 +17,7 @@ public:
     QString name() const;
     QString description() const;
     bool isValid() const;
-    QList<Section>* sections();
+    QList<Section*>* sections();
 
     QString conclusionHeader() const;
     QString conclusionMessage() const;
@@ -30,6 +30,11 @@ public:
     QString descriptionStyle() const;
 
     const Keyboard *keyboard() const;
+
+    void setName(const QString & str);
+    void setDescription(const QString & str);
+    void setConclusionHeader(const QString & str);
+    void setConclusionMessage(const QString & str);
 
 private:
     bool readXmlFile(const QString & filename);
@@ -51,7 +56,7 @@ private:
 
     Keyboard mKeyboard;
 
-    QList<Section> mSections;
+    QList<Section*> mSections;
 };
 
 #endif // COURSE_H

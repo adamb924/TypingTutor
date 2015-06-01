@@ -15,12 +15,22 @@ QString Section::description() const
     return mDescription;
 }
 
-void Section::addPrompt(const Prompt &p)
+void Section::setName(const QString &str)
+{
+    mName = str;
+}
+
+void Section::setDescription(const QString &str)
+{
+    mDescription = str;
+}
+
+void Section::addPrompt(Prompt * p)
 {
     mPrompts.append(p);
 }
 
-QList<Prompt> *Section::prompts()
+QList<Prompt *> *Section::prompts()
 {
     return &mPrompts;
 }

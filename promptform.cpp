@@ -5,34 +5,25 @@
 #include "keyboard.h"
 
 #include <QKeyEvent>
+#include <QDataWidgetMapper>
 #include <QtDebug>
 
-PromptForm::PromptForm(const Prompt &p, const Keyboard *kbd, const QString &courseName, const QString &sectionName, QWidget *parent) :
+PromptForm::PromptForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PromptForm),
-    mPrompt(p),
-    mKeyboard(kbd)
+    mKeyboard(0),
+    mMapper(0)
 {
     ui->setupUi(this);
 
     ui->inputEdit->setFocusPolicy(Qt::StrongFocus);
     ui->inputEdit->setFocus(Qt::OtherFocusReason);
-
-    ui->description->setText(mPrompt.description());
-
-    mTargetHighlighter = new TargetHighlighter( mPrompt.targetText(), ui->inputEdit->document() );
+    mTargetHighlighter = new TargetHighlighter(ui->inputEdit->document() );
 
     updateTargetTextDisplay();
-
-    ui->sectionName->setText(sectionName);
-    ui->courseName->setText(courseName);
-
     connect( ui->inputEdit, SIGNAL(textChanged()), this, SLOT(updateTargetTextDisplay()) );
-    connect( ui->nextButton, SIGNAL(clicked()), this, SIGNAL(next()) );
-    connect( ui->skipButton, SIGNAL(clicked()), this, SIGNAL(next()) );
-    connect( ui->previousButton, SIGNAL(clicked()), this, SIGNAL(previous()) );
-    connect( this, SIGNAL(textEnteredCorrectly()), this, SLOT(allowUserToAdvance()) );
     connect( ui->inputEdit, SIGNAL(focusIn()), this, SLOT(updateTargetTextDisplay()));
+    connect( this, SIGNAL(targetTextChanged()), this, SLOT(updateTargetText()));
 }
 
 PromptForm::~PromptForm()
@@ -40,10 +31,9 @@ PromptForm::~PromptForm()
     delete ui;
 }
 
-void PromptForm::setHeaderStyle(const QString &style)
+void PromptForm::setKeyboard(const Keyboard *kbd)
 {
-    ui->courseName->setStyleSheet(style);
-    ui->sectionName->setStyleSheet(style);
+    mKeyboard = kbd;
 }
 
 void PromptForm::setDescriptionStyle(const QString &style)
@@ -63,11 +53,39 @@ void PromptForm::clearInput()
     ui->inputEdit->setFocus(Qt::OtherFocusReason);
 }
 
+void PromptForm::setModel(QAbstractItemModel *model)
+{
+    mMapper = new QDataWidgetMapper;
+    mMapper->setModel(model);
+    mMapper->addMapping( this, 0, "targetText" );
+    mMapper->addMapping( ui->targetEdit, 0, "plainText" );
+    mMapper->addMapping( ui->description, 1, "text" );
+}
+
+void PromptForm::setIndex(const QModelIndex &index, const QModelIndex &root)
+{
+    if( mMapper == 0 )
+        return;
+    mMapper->setRootIndex(root);
+    mMapper->setCurrentModelIndex(index);
+}
+
+void PromptForm::updateTargetText()
+{
+    mTargetHighlighter->setTargetText(mTargetText);
+    updateTargetTextDisplay();
+}
+
 void PromptForm::updateTargetTextDisplay()
 {
-    ui->targetEdit->setText( mPrompt.targetText() );
+    if( mKeyboard == 0 )
+    {
+        return;
+    }
+
+    ui->targetEdit->setText( mTargetText );
     QString enteredText = ui->inputEdit->toPlainText();
-    int matchLength = PromptForm::getFirstNonmatching(enteredText, mPrompt.targetText());
+    int matchLength = PromptForm::getFirstNonmatching(enteredText, mTargetText );
 
     if( matchLength == -1 )
     {
@@ -76,16 +94,26 @@ void PromptForm::updateTargetTextDisplay()
         return;
     }
 
-    QString remainder = mPrompt.targetText().mid(matchLength);
-    emit changePrompt( mKeyboard->nextThingToType( remainder ) );
-    emit showHint( enteredText.length() > matchLength ? mKeyboard->nextHint(remainder) : "" );
-
-    if( enteredText.length() < mPrompt.targetText().length() )
+    if( matchLength < mTargetText.length() )
     {
-        QString targetHtml = mPrompt.targetText().left( matchLength );
+        QString remainder = mTargetText.mid(matchLength);
+        emit showHint( mKeyboard->nextThingToType( remainder ) );
+        if( enteredText.length() > matchLength )
+        {
+            emit inputPrompt( mKeyboard->nextHint(remainder) );
+        }
+        else
+        {
+            emit inputPrompt("");
+        }
+    }
+
+    if( enteredText.length() < mTargetText.length() )
+    {
+        QString targetHtml = mTargetText.left( matchLength );
         if( matchLength > 0 )
         {
-            QString remainderString = mPrompt.targetText().mid(matchLength);
+            QString remainderString = mTargetText.mid(matchLength);
             if( targetHtml.at(targetHtml.length()-1).isLetterOrNumber() && remainderString.at(0).isLetterOrNumber() )
             {
                 targetHtml += QChar(0x200D);
@@ -101,16 +129,10 @@ void PromptForm::updateTargetTextDisplay()
         }
         else
         {
-            targetHtml = mPrompt.targetText();
+            targetHtml = mTargetText;
         }
         ui->targetEdit->setText(targetHtml);
     }
-}
-
-void PromptForm::allowUserToAdvance()
-{
-    ui->nextButton->setEnabled(true);
-    ui->nextButton->setFocus(Qt::OtherFocusReason);
 }
 
 int PromptForm::getFirstNonmatching(const QString &one, const QString &two)

@@ -11,6 +11,9 @@ public:
     QString targetText() const;
     QString description() const;
 
+    void setTargetText(const QString & str);
+    void setDescription(const QString & str);
+
 private:
     QString mTargetText;
     QString mDescription;

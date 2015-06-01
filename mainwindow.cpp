@@ -2,33 +2,41 @@
 #include "ui_mainwindow.h"
 
 #include "course.h"
-#include "descriptionform.h"
 #include "promptform.h"
+#include "courseeditorwindow.h"
 
 #include <QStackedWidget>
 #include <QLabel>
 #include <QFileDialog>
 #include <QtDebug>
 #include <QStandardItemModel>
+#include <QDataWidgetMapper>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    mStackedWidget(0),
-    mCourseModel(0),
+    mModel(0),
     mCourse(0)
 {
     ui->setupUi(this);
 
     connect( ui->actionOpen_course, SIGNAL(triggered()), this, SLOT(openCourse()) );
-
-    connect( ui->promptDock, SIGNAL(visibilityChanged(bool)), ui->actionShow_hint, SLOT(setChecked(bool)) );
-    connect( ui->actionShow_hint, SIGNAL(toggled(bool)), ui->promptDock, SLOT(setVisible(bool)) );
-
+    connect( ui->actionShow_hint, SIGNAL(toggled(bool)), ui->hintDock, SLOT(setVisible(bool)) );
     connect( ui->progressDock, SIGNAL(visibilityChanged(bool)), ui->actionShow_progress, SLOT(setChecked(bool)) );
     connect( ui->actionShow_progress, SIGNAL(toggled(bool)), ui->progressDock, SLOT(setVisible(bool)) );
+    connect( ui->actionEdit_course, SIGNAL(triggered()), this, SLOT(editCourse()) );
+    connect( ui->nextButton, SIGNAL(clicked()), this, SLOT(nextSlide()) );
+    connect( ui->previousButton, SIGNAL(clicked()), this, SLOT(previousSlide()) );
+    connect( ui->skipButton, SIGNAL(clicked()), this, SLOT(nextSlide()) );
+    connect( ui->promptPage, SIGNAL(showHint(QString)), this, SLOT(setHint(QString)));
+    connect( ui->promptPage, SIGNAL(inputPrompt(QString)), statusBar(), SLOT(showMessage(QString)) );
+    connect( ui->promptPage, SIGNAL(textEnteredCorrectly()), this, SLOT(promptToMoveForward()) );
 
-    showOrHideDocks();
+    ui->progressDock->hide();
+    ui->hintDock->hide();
+    ui->previousButton->hide();
+    ui->nextButton->hide();
+    ui->skipButton->hide();
 }
 
 MainWindow::~MainWindow()
@@ -62,188 +70,326 @@ void MainWindow::openCourse()
 
 void MainWindow::setupCourseLayout()
 {
-    if( mStackedWidget != 0 )
-    {
-        delete mStackedWidget;
-    }
-
     /// Create the tree model
-    if( mCourseModel != 0 )
+    if( mModel != 0 )
     {
-        delete mCourseModel;
+        delete mModel;
     }
-    mCourseModel = new QStandardItemModel;
 
-    /// Create the actual interface
-    mStackedWidget = new QStackedWidget;
+    ui->promptPage->setKeyboard( mCourse->keyboard() );
 
-    DescriptionForm * courseDesc = new DescriptionForm( mCourse->name(), mCourse->description() );
-    courseDesc->setHasPreviousNext(false,true);
-    courseDesc->setHeaderStyle( mCourse->headerStyle() );
-    courseDesc->setDescriptionStyle( mCourse->descriptionStyle() );
-    connect( courseDesc, SIGNAL(next()), this, SLOT(nextSlide()) );
-    connect( courseDesc, SIGNAL(previous()), this, SLOT(previousSlide()) );
-    mStackedWidget->addWidget( courseDesc );
+    mModel = new QStandardItemModel;
 
-    QStandardItem *titleItem = new QStandardItem( mCourse->name() );
-    titleItem->setEditable(false);
-    mCourseModel->appendRow( titleItem );
-    mIndexWidgetHash.insert(titleItem->index(), courseDesc);
+    ui->actionEdit_course->setEnabled(true);
 
-    QList<Section>* sections = mCourse->sections();
+    newDescriptionItem( mCourse->name(), mCourse->description() );
+
+    QList<Section*>* sections = mCourse->sections();
     for(int s=0; s<sections->count(); s++)
     {
-        Section section = sections->at(s);
-        DescriptionForm * desc = new DescriptionForm( section.name(), section.description() );
-        desc->setHeaderStyle( mCourse->headerStyle() );
-        desc->setDescriptionStyle( mCourse->descriptionStyle() );
-        connect( desc, SIGNAL(next()), this, SLOT(nextSlide()) );
-        connect( desc, SIGNAL(previous()), this, SLOT(previousSlide()) );
-        mStackedWidget->addWidget( desc );
+        Section * section = sections->at(s);
+        newDescriptionItem( section->name(), section->description() );
 
-        QStandardItem *sectionItem = new QStandardItem( mCourse->sections()->at(s).name() );
-        sectionItem->setEditable(false);
-        mCourseModel->appendRow( sectionItem );
-
-        mIndexWidgetHash.insert(sectionItem->index(), desc);
-
-        QList<Prompt>* prompts = section.prompts();
+        QList<Prompt*>* prompts = section->prompts();
         for(int p=0; p<prompts->count(); p++)
         {
-            PromptForm *promptForm = new PromptForm( prompts->at(p), mCourse->keyboard(), mCourse->name(), section.name() );
-            promptForm->setHeaderStyle( mCourse->headerStyle() );
-            promptForm->setDescriptionStyle( mCourse->descriptionStyle() );
-            promptForm->setTextEditStyle(mCourse->textEntryStyle());
-            connect( promptForm, SIGNAL(next()), this, SLOT(nextSlide()) );
-            connect( promptForm, SIGNAL(previous()), this, SLOT(previousSlide()) );
-            connect( promptForm, SIGNAL(changePrompt(QString)), this, SLOT(setPrompt(QString)) );
-            connect( promptForm, SIGNAL(showHint(QString)), statusBar(), SLOT(showMessage(QString)) );
-            mStackedWidget->addWidget( promptForm );
-
-            QStandardItem *promptItem = new QStandardItem( prompts->at(p).targetText() );
-            promptItem->setEditable(false);
-            sectionItem->appendRow( promptItem );
-
-            mIndexWidgetHash.insert(promptItem->index(), promptForm);
-        }
-/*
-        DescriptionForm * concPage = new DescriptionForm( section.conclusionHeader(), section.conclusionMessage() );
-        connect( concPage, SIGNAL(next()), this, SLOT(nextSlide()) );
-        connect( concPage, SIGNAL(previous()), this, SLOT(previousSlide()) );
-        mStackedWidget->addWidget( concPage );
-
-        QStandardItem *concItem = new QStandardItem( mCourse->sections()->at(s).conclusionHeader() );
-        concItem->setEditable(false);
-        sectionItem->appendRow( concItem );
-        mIndexWidgetHash.insert(concItem->index(), concPage);
-*/
+            newPromptItem(prompts->at(p));
+      }
     }
 
-    DescriptionForm * concPage = new DescriptionForm( mCourse->conclusionHeader(), mCourse->conclusionMessage() );
-    concPage->setHeaderStyle( mCourse->headerStyle() );
-    concPage->setDescriptionStyle( mCourse->descriptionStyle() );
-    connect( concPage, SIGNAL(next()), this, SLOT(nextSlide()) );
-    connect( concPage, SIGNAL(previous()), this, SLOT(previousSlide()) );
-    concPage->setHasPreviousNext(true,false);
-    mStackedWidget->addWidget( concPage );
+    newDescriptionItem( mCourse->conclusionHeader(), mCourse->conclusionMessage() );
 
-    QStandardItem *concItem = new QStandardItem( mCourse->conclusionHeader() );
-    concItem->setEditable(false);
-    mCourseModel->appendRow( concItem );
-    mIndexWidgetHash.insert(concItem->index(), concPage);
+    ui->hintLabel->setText("");
 
-    ui->prompt->setText("");
-
-
-    ui->treeView->setModel(mCourseModel);
+    ui->treeView->setModel(mModel);
+    ui->treeView->hideColumn(1);
     ui->treeView->setHeaderHidden(true);
-    connect( ui->treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(focusWidget(QModelIndex)) );
 
     // user-defined styles
-    ui->prompt->setStyleSheet(mCourse->promptStyle());
+    ui->headerLabel->setStyleSheet( mCourse->headerStyle() );
+    ui->descriptionLabel->setStyleSheet( mCourse->descriptionStyle() );
+    ui->hintLabel->setStyleSheet(mCourse->promptStyle());
 
-    ui->verticalLayout->addWidget( mStackedWidget );
+    connect( mModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)) );
 
-    showSlide(0);
+    // description
+    mDescriptionMapper = new QDataWidgetMapper;
+    mDescriptionMapper->setModel(mModel);
+    mDescriptionMapper->addMapping( ui->headerLabel, 0, "text");
+    mDescriptionMapper->addMapping( ui->descriptionLabel , 1, "text");
+    mDescriptionMapper->toFirst();
+
+    ui->promptPage->setModel(mModel);
+
+    connect( ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex,QModelIndex)));
+
+    QModelIndex index = mModel->index(0,0);
+    selectIndex( index );
+}
+
+void MainWindow::newDescriptionItem(const QString &header, const QString &description )
+{
+    QStandardItem *item = new QStandardItem( header );
+    QStandardItem *descriptionColumn = new QStandardItem( description );
+
+    QList<QStandardItem*> columns;
+    columns << item << descriptionColumn;
+
+    mModel->appendRow( columns );
+}
+
+void MainWindow::newPromptItem(const Prompt * prompt)
+{
+    QStandardItem *first = new QStandardItem( prompt->targetText() );
+    QStandardItem *second = new QStandardItem( prompt->description() );
+    first->setEditable(false);
+    second->setEditable(false);
+
+    QList<QStandardItem*> columns;
+    columns << first << second;
+
+    mModel->item( mModel->rowCount() -1 , 0 )->appendRow( columns );
+}
+
+QModelIndex MainWindow::selectedOrFirst() const
+{
+    if( ui->treeView->selectionModel()->selectedIndexes().count() > 0 )
+    {
+        return ui->treeView->selectionModel()->selectedIndexes().first();
+    }
+    else
+    {
+        return mModel->index(0,0);
+    }
+}
+
+void MainWindow::selectIndex(const QModelIndex &index)
+{
+    ui->treeView->clearSelection();
+    ui->treeView->selectionModel()->select( index, QItemSelectionModel::Select );
+    ui->treeView->scrollTo(index);
+    itemClicked( index );
 }
 
 void MainWindow::nextSlide()
 {
-    int current = mStackedWidget->currentIndex();
-    if( current < mStackedWidget->count() - 1 )
+    QModelIndex index = selectedOrFirst();
+    QModelIndex parent = index.parent();
+    if( parent.isValid() ) // this is a child item
     {
-        showSlide(current+1);
+        if( index.row() == mModel->rowCount( parent ) - 1 )
+        {
+            if( parent.row() < mModel->rowCount() )
+            {
+                selectIndex( mModel->index( parent.row()+1 , 0 ) );
+            }
+        }
+        else
+        {
+            selectIndex( mModel->index( index.row()+1 , 0, parent ) );
+        }
+    }
+    else // this is a top level item
+    {
+        if( mModel->itemFromIndex(index)->hasChildren() )
+        {
+            ui->treeView->expand(index);
+            selectIndex( index.child(0,0) );
+        }
+        else
+        {
+            if( index.row() < mModel->rowCount() - 1 ) // there is at least one row after it
+            {
+                selectIndex( mModel->index( index.row()+1 , 0 ) );
+            }
+        }
     }
 }
 
 void MainWindow::previousSlide()
 {
-    int current = mStackedWidget->currentIndex();
-    if( current > 0 )
+    QModelIndex index = selectedOrFirst();
+    QModelIndex parent = index.parent();
+    if( parent.isValid() )
     {
-        showSlide(current-1);
-    }
-}
-
-void MainWindow::showSlide(int index)
-{
-    mStackedWidget->setCurrentIndex( index );
-    PromptForm* p = qobject_cast<PromptForm*>(mStackedWidget->currentWidget());
-    if( p != 0 )
-    {
-        p->clearInput();
-    }
-    QWidget * w = mStackedWidget->currentWidget();
-    QModelIndex i = mIndexWidgetHash.key( w, QModelIndex() );
-    if( i.isValid() )
-    {
-        QItemSelectionModel *selectionModel = ui->treeView->selectionModel();
-        selectionModel->select( i , QItemSelectionModel::ClearAndSelect);
-        ui->treeView->collapseAll();
-        QModelIndex parent = i.parent();
-        if( parent != QModelIndex() )
+        if( index.row() == 0 )
         {
-            ui->treeView->setExpanded(parent, true);
+            selectIndex( parent );
+        }
+        else
+        {
+            selectIndex( mModel->index( index.row()-1 , 0, parent ) );
         }
     }
-    showOrHideDocks();
-}
-
-void MainWindow::setPrompt(const QString &newPrompt)
-{
-    ui->prompt->setText(newPrompt);
-}
-
-void MainWindow::focusWidget(const QModelIndex &index)
-{
-    QWidget *w = mIndexWidgetHash.value(index, 0);
-    if( w != 0 )
+    else
     {
-        int currentSlide = mStackedWidget->indexOf( w );
-        if( currentSlide != -1)
+        if( index.row() > 0 )
         {
-            showSlide(currentSlide);
+            QModelIndex previous = mModel->index( index.row()-1 , 0 );
+            if( mModel->rowCount(previous) > 0 )
+            {
+                selectIndex( previous.child( mModel->rowCount(previous) -1 , 0 ) );
+            }
+            else
+            {
+                selectIndex( previous );
+            }
         }
     }
 }
 
-void MainWindow::showOrHideDocks()
+void MainWindow::setHint(const QString &newHint)
 {
-    if( mStackedWidget == 0 )
+    ui->hintLabel->setText(newHint);
+}
+
+void MainWindow::editCourse()
+{
+    CourseEditorWindow * editor = new CourseEditorWindow(mModel);
+    editor->show();
+}
+
+void MainWindow::promptToMoveForward()
+{
+    ui->nextButton->setEnabled(true);
+    ui->nextButton->setFocus();
+}
+
+void MainWindow::itemChanged(QStandardItem *item)
+{
+    QModelIndex index = item->index();
+    QModelIndex parent = index.parent();
+
+    int row = index.row();
+    int col = index.column();
+
+    if( parent.isValid() ) // prompt
+    {
+        int section = parent.row() - 1;
+        if( col == 0 )
+        {
+            mCourse->sections()->at(section)->prompts()->at( row - 1 )->setTargetText( item->text() );
+        }
+        else
+        {
+            mCourse->sections()->at(section)->prompts()->at( row - 1 )->setDescription( item->text() );
+        }
+    }
+    else // header
+    {
+        if( row == 0 ) // course header
+        {
+            if( col == 0 )
+            {
+                mCourse->setName( item->text() );
+            }
+            else
+            {
+                mCourse->setDescription( item->text() );
+            }
+        }
+        else if( row == mCourse->sections()->count() + 1 ) // course conclusion
+        {
+            if( col == 0 )
+            {
+                mCourse->setConclusionHeader( item->text() );
+            }
+            else
+            {
+                mCourse->setConclusionMessage( item->text() );
+            }
+        }
+        else // section header
+        {
+            row--;
+            if( col == 0 )
+            {
+                mCourse->sections()->at(row)->setName( item->text() );
+            }
+            else
+            {
+                mCourse->sections()->at(row)->setDescription( item->text() );
+            }
+        }
+    }
+}
+
+void MainWindow::itemClicked(const QModelIndex &index, const QModelIndex &previous)
+{
+    Q_UNUSED(previous);
+
+    QModelIndex parent = index.parent();
+    if( parent.isValid() )
+    {
+        ui->stackedWidget->setCurrentIndex( 1 );
+        ui->promptPage->setIndex( index, parent );
+        ui->promptPage->clearInput();
+        ui->nextButton->setEnabled(false);
+    }
+    else
+    {
+        ui->stackedWidget->setCurrentIndex( 0 );
+        mDescriptionMapper->setRootIndex(parent);
+        mDescriptionMapper->setCurrentModelIndex(index);
+        ui->nextButton->setEnabled(true);
+    }
+    showOrHideDocksAndButtons(index);
+}
+
+void MainWindow::showOrHideDocksAndButtons(QModelIndex index)
+{
+    if( mCourse == 0 || mModel == 0 )
     {
         ui->progressDock->hide();
+//        ui->hintDock->hide();
+        ui->previousButton->hide();
+        ui->nextButton->hide();
+        ui->skipButton->hide();
+        return;
+    }
+
+    ui->progressDock->setVisible( ui->actionShow_progress->isChecked() );
+
+    if( !index.isValid() )
+    {
+        index = selectedOrFirst();
+    }
+
+    if( !index.parent().isValid() && index.row() == 0 )
+    {
+        ui->previousButton->hide();
     }
     else
     {
-        ui->progressDock->setVisible( ui->actionShow_progress->isChecked() );
+        ui->previousButton->show();
     }
-    if( mStackedWidget == 0 || qobject_cast<PromptForm*>(mStackedWidget->currentWidget()) == 0 )
+
+    if( !index.parent().isValid() && index.row() == mModel->rowCount() - 1 )
     {
-        ui->promptDock->hide();
+        ui->nextButton->hide();
     }
     else
     {
-        ui->promptDock->setVisible( ui->actionShow_hint->isChecked() );
+        ui->nextButton->show();
+    }
+
+    if( isPrompt(index) )
+    {
+        ui->skipButton->show();
+        ui->hintDock->setVisible( ui->actionShow_hint->isChecked() );
+    }
+    else
+    {
+        ui->skipButton->hide();
+        ui->hintDock->hide();
     }
 }
 
+bool MainWindow::isPrompt(const QModelIndex & index) const
+{
+    if( mCourse == 0 || mModel == 0 )
+    {
+        return false;
+    }
+    return index.parent().isValid();
+}

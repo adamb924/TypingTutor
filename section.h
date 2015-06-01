@@ -14,9 +14,12 @@ public:
     QString name() const;
     QString description() const;
 
-    void addPrompt(const Prompt & p);
+    void setName(const QString & str);
+    void setDescription(const QString & str);
 
-    QList<Prompt>* prompts();
+    void addPrompt(Prompt * p);
+
+    QList<Prompt*>* prompts();
 
     QString conclusionHeader() const;
     QString conclusionMessage() const;
@@ -28,7 +31,7 @@ private:
     QString mConclusionHeader;
     QString mConclusionMessage;
 
-    QList<Prompt> mPrompts;
+    QList<Prompt*> mPrompts;
 };
 
 #endif // SECTION_H

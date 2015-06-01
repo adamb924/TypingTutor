@@ -27,7 +27,7 @@ bool Course::isValid() const
     return mValid;
 }
 
-QList<Section> *Course::sections()
+QList<Section *> *Course::sections()
 {
     return &mSections;
 }
@@ -70,6 +70,26 @@ QString Course::descriptionStyle() const
 const Keyboard *Course::keyboard() const
 {
     return &mKeyboard;
+}
+
+void Course::setName(const QString &str)
+{
+    mName = str;
+}
+
+void Course::setDescription(const QString &str)
+{
+    mDescription = str;
+}
+
+void Course::setConclusionHeader(const QString &str)
+{
+    mConclusionHeader = str;
+}
+
+void Course::setConclusionMessage(const QString &str)
+{
+    mConclusionMessage = str;
 }
 
 bool Course::readXmlFile(const QString &filename)
@@ -147,7 +167,7 @@ bool Course::readXmlFile(const QString &filename)
                     conclusionMessage = readHtml(xml);
                 }
 
-                mSections.append( Section(name, description, conclusionHeader, conclusionMessage) );
+                mSections.append( new Section(name, description, conclusionHeader, conclusionMessage) );
             }
             else if ( xml.name() == "prompt" )
             {
@@ -165,7 +185,7 @@ bool Course::readXmlFile(const QString &filename)
                     targetText = readHtml(xml);
                 }
 
-                mSections.last().addPrompt( Prompt( targetText, description ) );
+                mSections.last()->addPrompt( new Prompt( targetText, description ) );
             }
         }
     }

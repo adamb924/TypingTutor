@@ -19,34 +19,6 @@ font-family: Georgia, Times, Times New Roman;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="courseName">
-       <property name="styleSheet">
-        <string notr="true">font-size: 16pt;
-</string>
-       </property>
-       <property name="text">
-        <string>Course name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="sectionName">
-       <property name="styleSheet">
-        <string notr="true">font-size: 16pt;</string>
-       </property>
-       <property name="text">
-        <string>Section name</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QLabel" name="description">
      <property name="text">
       <string>Description</string>
@@ -127,76 +99,6 @@ font-family: Georgia, Times, Times New Roman;</string>
      </property>
     </spacer>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="skipButton">
-       <property name="text">
-        <string>Skip</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="previousButton">
-       <property name="text">
-        <string>Previous</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="nextButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Next</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>93</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -208,8 +110,6 @@ font-family: Georgia, Times, Times New Roman;</string>
  </customwidgets>
  <tabstops>
   <tabstop>inputEdit</tabstop>
-  <tabstop>nextButton</tabstop>
-  <tabstop>previousButton</tabstop>
   <tabstop>targetEdit</tabstop>
  </tabstops>
  <resources/>

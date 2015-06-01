@@ -14,3 +14,13 @@ QString Prompt::description() const
 {
     return mDescription;
 }
+
+void Prompt::setTargetText(const QString &str)
+{
+    mTargetText = str;
+}
+
+void Prompt::setDescription(const QString &str)
+{
+    mDescription = str;
+}

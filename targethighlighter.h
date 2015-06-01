@@ -6,7 +6,9 @@
 class TargetHighlighter : public QSyntaxHighlighter
 {
 public:
-    TargetHighlighter(const QString & targetText, QTextDocument *parent = 0);
+    TargetHighlighter(QTextDocument *parent = 0);
+
+    void setTargetText(const QString & targetText);
 
 protected:
     void highlightBlock(const QString &text);
