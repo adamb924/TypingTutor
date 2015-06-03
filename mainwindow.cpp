@@ -270,11 +270,11 @@ void MainWindow::itemChanged(QStandardItem *item)
         int section = parent.row() - 1;
         if( col == 0 )
         {
-            mCourse->sections()->at(section)->prompts()->at( row - 1 )->setTargetText( item->text() );
+            mCourse->sections()->at(section)->prompts()->at( row )->setTargetText( item->text() );
         }
         else
         {
-            mCourse->sections()->at(section)->prompts()->at( row - 1 )->setDescription( item->text() );
+            mCourse->sections()->at(section)->prompts()->at( row )->setDescription( item->text() );
         }
     }
     else // header
