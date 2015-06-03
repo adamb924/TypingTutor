@@ -19,9 +19,23 @@ QModelIndex CourseModel::index(int row, int column, const QModelIndex &parent) c
 
     void * ptr;
     if( parent.isValid() ) // prompt
-        ptr = mCourse->sections()->at( parent.row() )->prompts()->at( row );
-    else // section
-        ptr = mCourse->sections()->at( row );
+    {
+        Q_ASSERT( (parent.row() - 1) < mCourse->sections()->count() );
+        Q_ASSERT( row < mCourse->sections()->at( parent.row() - 1 )->prompts()->count() );
+        ptr = mCourse->sections()->at( parent.row() -1 )->prompts()->at( row );
+    }
+    else // first-level element
+    {
+        if( row == 0 || row == rowCount() - 1 ) // intro/conclusion
+        {
+            ptr = 0;
+        }
+        else  // section
+        {
+            Q_ASSERT( (row-1) < mCourse->sections()->count() );
+            ptr = mCourse->sections()->at( row - 1 );
+        }
+    }
     return createIndex(row, column, ptr );
 }
 
@@ -36,7 +50,10 @@ QModelIndex CourseModel::parent(const QModelIndex &index) const
     {
         int section = mCourse->whichSection(p);
         if( section != -1 )
-            return createIndex( section, 0, mCourse->sections()->at(section) );
+        {
+            Q_ASSERT( section < mCourse->sections()->count() );
+            return createIndex( section + 1, 0, mCourse->sections()->at(section) );
+        }
     }
 
     return QModelIndex();
@@ -49,6 +66,24 @@ QVariant CourseModel::data(const QModelIndex &index, int role) const
 
     if (role != Qt::DisplayRole && role != Qt::EditRole )
         return QVariant();
+
+    if( !index.parent().isValid() )
+    {
+        if( index.row() == 0 ) // intro
+        {
+            if( index.column() == 0 )
+                return mCourse->name();
+            else
+                return mCourse->description();
+        }
+        else if ( index.row() == rowCount() - 1 ) // conclusion
+        {
+            if( index.column() == 0 )
+                return mCourse->conclusionHeader();
+            else
+                return mCourse->conclusionMessage();
+        }
+    }
 
     QObject * o = static_cast<QObject*>(index.internalPointer());
     Section *s = qobject_cast<Section*>(o);
@@ -96,18 +131,18 @@ int CourseModel::rowCount(const QModelIndex &parent) const
     {
         QObject * o = static_cast<QObject*>(parent.internalPointer());
         Section *s = qobject_cast<Section*>(o);
-        if( s != 0 )
+        if( s != 0 ) // section
         {
             return s->prompts()->count();
         }
-        else // must be a prompt
+        else // prompt
         {
             return 0;
         }
     }
     else
     {
-        return mCourse->sections()->count();
+        return mCourse->sections()->count() + 2;
     }
 }
 
