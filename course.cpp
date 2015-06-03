@@ -187,6 +187,25 @@ bool Course::readXmlFile(const QString &filename)
 
                 mSections.last()->addPrompt( new Prompt( targetText, description ) );
             }
+            /// for reading the keyboard
+            else if( xml.name() == "letter" )
+            {
+                QXmlStreamAttributes  attr = xml.attributes();
+                if( attr.hasAttribute("unicode")
+                        && attr.hasAttribute("hint")
+                        && attr.hasAttribute("prompt") )
+                {
+                    mKeyboard.appendLetter( Letter( attr.value("unicode").toString() , attr.value("hint").toString() , attr.value("prompt").toString() ) );
+                }
+            }
+            else if ( xml.name() == "keyboard" )
+            {
+                QXmlStreamAttributes  attr = xml.attributes();
+                if( attr.hasAttribute("name") )
+                {
+                    mKeyboard.setName( attr.value("name").toString() );
+                }
+            }
         }
     }
     if (xml.hasError())
@@ -194,23 +213,6 @@ bool Course::readXmlFile(const QString &filename)
         qWarning() << "Error (Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << "): " << xml.errorString();
         return false;
     }
-
-    QFileInfo inSameDirectory(file);
-    if ( inSameDirectory.dir().exists( mKeyboardFilename ) )
-    {
-        mKeyboard = Keyboard( inSameDirectory.dir().absoluteFilePath(mKeyboardFilename) );
-    }
-    else if ( QDir::current().exists( mKeyboardFilename ) )
-    {
-        mKeyboard = Keyboard( QDir::current().absoluteFilePath(mKeyboardFilename) );
-    }
-    else
-    {
-        qWarning() << "Could not find the keyboard file: " << mKeyboardFilename;
-        return false;
-    }
-
-    mKeyboard = Keyboard(mKeyboardFilename);
 
     return true;
 }

@@ -8,56 +8,24 @@ Keyboard::Keyboard()
 {
 }
 
-Keyboard::Keyboard(const QString &filename)
-{
-    loadKeyboardFile(filename);
-}
-
-bool Keyboard::loadKeyboardFile(const QString &filename)
-{
-    mLetters.clear();
-
-    QFile file(filename);
-    file.open(QFile::ReadOnly);
-    QXmlStreamReader xml(&file);
-
-    while (!xml.atEnd())
-    {
-        xml.readNext();
-        QXmlStreamAttributes  attr = xml.attributes();
-        if( xml.name() == "letter" )
-        {
-            if( attr.hasAttribute("unicode")
-                    && attr.hasAttribute("hint")
-                    && attr.hasAttribute("prompt") )
-            {
-                mLetters.append( Letter( attr.value("unicode").toString() , attr.value("hint").toString() , attr.value("prompt").toString() ) );
-            }
-        }
-        else if ( xml.name() == "keyboard" )
-        {
-            if( attr.hasAttribute("name") )
-            {
-                mName = attr.value("name").toString();
-            }
-        }
-    }
-    if (xml.hasError())
-    {
-        qWarning() << "Error (Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << "): " << xml.errorString();
-        return false;
-    }    
-    return true;
-}
-
 QString Keyboard::name() const
 {
     return mName;
 }
 
+void Keyboard::setName(const QString &name)
+{
+    mName = name;
+}
+
+void Keyboard::appendLetter(const Letter &letter)
+{
+    mLetters.append(letter);
+}
+
 bool Keyboard::isValid() const
 {
-    return mLetters.count();
+    return mLetters.count() > 0;
 }
 
 QString Keyboard::nextThingToType(const QString &remainder) const

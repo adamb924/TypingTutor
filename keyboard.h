@@ -8,10 +8,11 @@ class Keyboard
 {
 public:
     Keyboard();
-    Keyboard(const QString & filename);
 
-    bool loadKeyboardFile(const QString & filename);
     QString name() const;
+
+    void setName(const QString & name);
+    void appendLetter( const Letter & letter );
 
     bool isValid() const;
 
