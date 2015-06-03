@@ -1,14 +1,17 @@
 #include "courseeditorwindow.h"
 #include "ui_courseeditorwindow.h"
 
+#include "course.h"
+
 #include <QStandardItemModel>
 #include <QDataWidgetMapper>
 #include <QtDebug>
 
-CourseEditorWindow::CourseEditorWindow(QStandardItemModel * model, QWidget *parent) :
+CourseEditorWindow::CourseEditorWindow(Course * course, QStandardItemModel * model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CourseEditorWindow),
-    mModel(model)
+    mModel(model),
+    mCourse(course)
 {
     ui->setupUi(this);
     ui->treeView->setModel(mModel);
@@ -16,6 +19,11 @@ CourseEditorWindow::CourseEditorWindow(QStandardItemModel * model, QWidget *pare
     ui->treeView->hideColumn(1);
 
     connect( ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)) );
+
+    ui->descriptionHeadingEdit->setStyleSheet( course->headerStyle() );
+    ui->descriptionIntroductionEdit->setStyleSheet( course->descriptionStyle() );
+    ui->promptEdit->setStyleSheet( course->promptStyle() );
+    ui->introductionEdit->setStyleSheet( course->descriptionStyle() );
 
     // description
     mDescriptionMapper = new QDataWidgetMapper;

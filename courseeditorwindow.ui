@@ -17,6 +17,18 @@
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
     <item>
      <widget class="QTreeView" name="treeView">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="dragEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="dragDropMode">
+       <enum>QAbstractItemView::InternalMove</enum>
+      </property>
+      <property name="defaultDropAction">
+       <enum>Qt::IgnoreAction</enum>
+      </property>
       <property name="headerHidden">
        <bool>true</bool>
       </property>

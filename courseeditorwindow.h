@@ -5,6 +5,7 @@
 
 class QStandardItemModel;
 class QDataWidgetMapper;
+class Course;
 
 namespace Ui {
 class CourseEditorWindow;
@@ -15,7 +16,7 @@ class CourseEditorWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CourseEditorWindow(QStandardItemModel * model, QWidget *parent = 0);
+    CourseEditorWindow(Course * course, QStandardItemModel * model, QWidget *parent = 0);
     ~CourseEditorWindow();
 
 private slots:
@@ -24,6 +25,7 @@ private slots:
 private:
     Ui::CourseEditorWindow *ui;
     QStandardItemModel * mModel;
+    Course * mCourse;
 
     QDataWidgetMapper *mPromptMapper;
     QDataWidgetMapper *mDescriptionMapper;

@@ -120,6 +120,8 @@ void MainWindow::setupCourseLayout()
     mDescriptionMapper->toFirst();
 
     ui->promptPage->setModel(mModel);
+    ui->promptPage->setDescriptionStyle( mCourse->descriptionStyle() );
+    ui->promptPage->setTextEditStyle( mCourse->textEntryStyle() );
 
     connect( ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex,QModelIndex)));
 
@@ -245,7 +247,7 @@ void MainWindow::setHint(const QString &newHint)
 
 void MainWindow::editCourse()
 {
-    CourseEditorWindow * editor = new CourseEditorWindow(mModel);
+    CourseEditorWindow * editor = new CourseEditorWindow(mCourse, mModel);
     editor->show();
 }
 
