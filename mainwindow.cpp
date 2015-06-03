@@ -4,6 +4,7 @@
 #include "course.h"
 #include "promptform.h"
 #include "courseeditorwindow.h"
+#include "coursemodel.h"
 
 #include <QStackedWidget>
 #include <QLabel>
@@ -124,6 +125,8 @@ void MainWindow::setupCourseLayout()
     ui->promptPage->setTextEditStyle( mCourse->textEntryStyle() );
 
     connect( ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex,QModelIndex)));
+
+    ui->treeView->setModel( new CourseModel(mCourse) );
 
     QModelIndex index = mModel->index(0,0);
     selectIndex( index );

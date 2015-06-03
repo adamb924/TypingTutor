@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     prompt.cpp \
     promptform.cpp \
     shortcuttextedit.cpp \
-    courseeditorwindow.cpp
+    courseeditorwindow.cpp \
+    coursemodel.cpp
 
 HEADERS  += mainwindow.h \
     targethighlighter.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     prompt.h \
     promptform.h \
     shortcuttextedit.h \
-    courseeditorwindow.h
+    courseeditorwindow.h \
+    coursemodel.h
 
 FORMS    += mainwindow.ui \
     promptform.ui \

@@ -1,13 +1,15 @@
 #ifndef SECTION_H
 #define SECTION_H
 
+#include <QObject>
 #include <QString>
 #include <QList>
 
 #include "prompt.h"
 
-class Section
+class Section : public QObject
 {
+    Q_OBJECT
 public:
     Section(const QString & name, const QString & description, const QString & conclusionHeader, const QString & conclusionMessage);
 

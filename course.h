@@ -36,6 +36,8 @@ public:
     void setConclusionHeader(const QString & str);
     void setConclusionMessage(const QString & str);
 
+    int whichSection(const Prompt * prompt) const;
+
 private:
     bool readXmlFile(const QString & filename);
     QString readHtml( QXmlStreamReader &xml );

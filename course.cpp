@@ -92,6 +92,21 @@ void Course::setConclusionMessage(const QString &str)
     mConclusionMessage = str;
 }
 
+int Course::whichSection(const Prompt *prompt) const
+{
+    for(int i=0; i<mSections.count(); i++)
+    {
+        for(int j=0; j<mSections.at(i)->prompts()->count(); j++)
+        {
+            if( mSections.at(i)->prompts()->at(j) == prompt )
+            {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
 bool Course::readXmlFile(const QString &filename)
 {
     QFile file(filename);

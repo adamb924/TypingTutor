@@ -1,10 +1,12 @@
 #ifndef PROMPT_H
 #define PROMPT_H
 
+#include <QObject>
 #include <QString>
 
-class Prompt
+class Prompt : public QObject
 {
+    Q_OBJECT
 public:
     Prompt(const QString & targetText, const QString & description);
 
