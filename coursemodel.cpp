@@ -113,8 +113,7 @@ Qt::ItemFlags CourseModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return 0;
 
-    // TODO consider this
-    return QAbstractItemModel::flags(index);
+    return Qt::ItemIsSelectable	| Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
 QVariant CourseModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -151,4 +150,64 @@ int CourseModel::columnCount(const QModelIndex &parent) const
     Q_UNUSED( parent )
     /// this always happens to be 2
     return 2;
+}
+
+bool CourseModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    Q_UNUSED(role);
+    if( !index.isValid() )
+        return false;
+
+    QVector<int> rolesVector;
+    rolesVector.append( Qt::DisplayRole );
+    rolesVector.append( Qt::EditRole );
+
+    if( !index.parent().isValid() )
+    {
+        if( index.row() == 0 ) // intro
+        {
+            if( index.column() == 0 )
+                mCourse->setName( value.toString() );
+            else
+                mCourse->setDescription( value.toString() );
+            emit dataChanged(index, index, rolesVector);
+            return true;
+        }
+        else if ( index.row() == rowCount() - 1 ) // conclusion
+        {
+            if( index.column() == 0 )
+                mCourse->setConclusionHeader( value.toString() );
+            else
+                mCourse->setConclusionMessage( value.toString() );
+            emit dataChanged(index, index, rolesVector);
+            return true;
+        }
+    }
+
+    QObject * o = static_cast<QObject*>(index.internalPointer());
+    Section *s = qobject_cast<Section*>(o);
+    if( s != 0 )
+    {
+        if( index.column() == 0 )
+            s->setName(value.toString());
+        else
+            s->setDescription(value.toString());
+        emit dataChanged(index, index, rolesVector);
+        return true;
+    }
+    else
+    {
+        Prompt *p = static_cast<Prompt*>(o);
+        if( p != 0 )
+        {
+            if( index.column() == 0 )
+                p->setTargetText(value.toString());
+            else
+                p->setDescription(value.toString());
+        }
+        emit dataChanged(index, index, rolesVector);
+        return true;
+    }
+
+    return false;
 }
