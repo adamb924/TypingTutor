@@ -176,67 +176,22 @@ void MainWindow::selectIndex(const QModelIndex &index)
 void MainWindow::nextSlide()
 {
     QModelIndex index = selectedOrFirst();
-    QModelIndex parent = index.parent();
-    if( parent.isValid() ) // this is a child item
-    {
-        if( index.row() == mModel->rowCount( parent ) - 1 )
-        {
-            if( parent.row() < mModel->rowCount() )
-            {
-                selectIndex( mModel->index( parent.row()+1 , 0 ) );
-            }
-        }
-        else
-        {
-            selectIndex( mModel->index( index.row()+1 , 0, parent ) );
-        }
-    }
-    else // this is a top level item
-    {
-        if( mModel->itemFromIndex(index)->hasChildren() )
-        {
-            ui->treeView->expand(index);
-            selectIndex( index.child(0,0) );
-        }
-        else
-        {
-            if( index.row() < mModel->rowCount() - 1 ) // there is at least one row after it
-            {
-                selectIndex( mModel->index( index.row()+1 , 0 ) );
-            }
-        }
-    }
+    ui->treeView->expand(index);
+    selectIndex( ui->treeView->indexBelow(index) );
 }
 
 void MainWindow::previousSlide()
 {
     QModelIndex index = selectedOrFirst();
-    QModelIndex parent = index.parent();
-    if( parent.isValid() )
+    QModelIndex above = ui->treeView->indexAbove(index);
+    if( mModel->hasChildren(above) && mModel->hasChildren(index) )
     {
-        if( index.row() == 0 )
-        {
-            selectIndex( parent );
-        }
-        else
-        {
-            selectIndex( mModel->index( index.row()-1 , 0, parent ) );
-        }
+        ui->treeView->expand(above);
+        selectIndex( mModel->index( mModel->rowCount(above)-1 , 0, above ) );
     }
     else
     {
-        if( index.row() > 0 )
-        {
-            QModelIndex previous = mModel->index( index.row()-1 , 0 );
-            if( mModel->rowCount(previous) > 0 )
-            {
-                selectIndex( previous.child( mModel->rowCount(previous) -1 , 0 ) );
-            }
-            else
-            {
-                selectIndex( previous );
-            }
-        }
+        selectIndex( above );
     }
 }
 
