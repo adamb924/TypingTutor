@@ -8,10 +8,10 @@
 class Course;
 class QStackedWidget;
 class QStandardItem;
-class QStandardItemModel;
 class Prompt;
 class DescriptionForm;
 class QDataWidgetMapper;
+class CourseModel;
 
 namespace Ui {
 class MainWindow;
@@ -38,21 +38,17 @@ private slots:
 
     void setHint(const QString & newHint);
 
-    void itemChanged(QStandardItem * item);
-
     void itemClicked(const QModelIndex & index, const QModelIndex &previous = QModelIndex() );
 
 private:
     void showOrHideDocksAndButtons(QModelIndex index = QModelIndex());
     bool isPrompt(const QModelIndex &index) const;
-    void newDescriptionItem(const QString & header, const QString & description);
-    void newPromptItem(const Prompt *prompt);
     QModelIndex selectedOrFirst() const;
     void selectIndex(const QModelIndex & index);
 
 private:
     Ui::MainWindow *ui;
-    QStandardItemModel *mModel;
+    CourseModel *mModel;
     Course * mCourse;
     QDataWidgetMapper *mDescriptionMapper;
 };

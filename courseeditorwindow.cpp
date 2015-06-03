@@ -2,12 +2,13 @@
 #include "ui_courseeditorwindow.h"
 
 #include "course.h"
+#include "coursemodel.h"
 
 #include <QStandardItemModel>
 #include <QDataWidgetMapper>
 #include <QtDebug>
 
-CourseEditorWindow::CourseEditorWindow(Course * course, QStandardItemModel * model, QWidget *parent) :
+CourseEditorWindow::CourseEditorWindow(Course * course, CourseModel * model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CourseEditorWindow),
     mModel(model),

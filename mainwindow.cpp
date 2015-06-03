@@ -79,26 +79,9 @@ void MainWindow::setupCourseLayout()
 
     ui->promptPage->setKeyboard( mCourse->keyboard() );
 
-    mModel = new QStandardItemModel;
+    mModel = new CourseModel(mCourse);
 
     ui->actionEdit_course->setEnabled(true);
-
-    newDescriptionItem( mCourse->name(), mCourse->description() );
-
-    QList<Section*>* sections = mCourse->sections();
-    for(int s=0; s<sections->count(); s++)
-    {
-        Section * section = sections->at(s);
-        newDescriptionItem( section->name(), section->description() );
-
-        QList<Prompt*>* prompts = section->prompts();
-        for(int p=0; p<prompts->count(); p++)
-        {
-            newPromptItem(prompts->at(p));
-      }
-    }
-
-    newDescriptionItem( mCourse->conclusionHeader(), mCourse->conclusionMessage() );
 
     ui->hintLabel->setText("");
 
@@ -110,8 +93,6 @@ void MainWindow::setupCourseLayout()
     ui->headerLabel->setStyleSheet( mCourse->headerStyle() );
     ui->descriptionLabel->setStyleSheet( mCourse->descriptionStyle() );
     ui->hintLabel->setStyleSheet(mCourse->promptStyle());
-
-    connect( mModel, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)) );
 
     // description
     mDescriptionMapper = new QDataWidgetMapper;
@@ -126,34 +107,10 @@ void MainWindow::setupCourseLayout()
 
     connect( ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex,QModelIndex)));
 
-    ui->treeView->setModel( new CourseModel(mCourse) );
+    ui->treeView->setModel( mModel );
 
     QModelIndex index = mModel->index(0,0);
     selectIndex( index );
-}
-
-void MainWindow::newDescriptionItem(const QString &header, const QString &description )
-{
-    QStandardItem *item = new QStandardItem( header );
-    QStandardItem *descriptionColumn = new QStandardItem( description );
-
-    QList<QStandardItem*> columns;
-    columns << item << descriptionColumn;
-
-    mModel->appendRow( columns );
-}
-
-void MainWindow::newPromptItem(const Prompt * prompt)
-{
-    QStandardItem *first = new QStandardItem( prompt->targetText() );
-    QStandardItem *second = new QStandardItem( prompt->description() );
-    first->setEditable(false);
-    second->setEditable(false);
-
-    QList<QStandardItem*> columns;
-    columns << first << second;
-
-    mModel->item( mModel->rowCount() -1 , 0 )->appendRow( columns );
 }
 
 QModelIndex MainWindow::selectedOrFirst() const
@@ -213,65 +170,6 @@ void MainWindow::promptToMoveForward()
 {
     ui->nextButton->setEnabled(true);
     ui->nextButton->setFocus();
-}
-
-void MainWindow::itemChanged(QStandardItem *item)
-{
-    QModelIndex index = item->index();
-    QModelIndex parent = index.parent();
-
-    int row = index.row();
-    int col = index.column();
-
-    if( parent.isValid() ) // prompt
-    {
-        int section = parent.row() - 1;
-        if( col == 0 )
-        {
-            mCourse->sections()->at(section)->prompts()->at( row )->setTargetText( item->text() );
-        }
-        else
-        {
-            mCourse->sections()->at(section)->prompts()->at( row )->setDescription( item->text() );
-        }
-    }
-    else // header
-    {
-        if( row == 0 ) // course header
-        {
-            if( col == 0 )
-            {
-                mCourse->setName( item->text() );
-            }
-            else
-            {
-                mCourse->setDescription( item->text() );
-            }
-        }
-        else if( row == mCourse->sections()->count() + 1 ) // course conclusion
-        {
-            if( col == 0 )
-            {
-                mCourse->setConclusionHeader( item->text() );
-            }
-            else
-            {
-                mCourse->setConclusionMessage( item->text() );
-            }
-        }
-        else // section header
-        {
-            row--;
-            if( col == 0 )
-            {
-                mCourse->sections()->at(row)->setName( item->text() );
-            }
-            else
-            {
-                mCourse->sections()->at(row)->setDescription( item->text() );
-            }
-        }
-    }
 }
 
 void MainWindow::itemClicked(const QModelIndex &index, const QModelIndex &previous)

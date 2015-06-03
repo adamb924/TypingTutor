@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-class QStandardItemModel;
+class CourseModel;
 class QDataWidgetMapper;
 class Course;
 
@@ -16,7 +16,7 @@ class CourseEditorWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CourseEditorWindow(Course * course, QStandardItemModel * model, QWidget *parent = 0);
+    CourseEditorWindow(Course * course, CourseModel * model, QWidget *parent = 0);
     ~CourseEditorWindow();
 
 private slots:
@@ -24,7 +24,7 @@ private slots:
 
 private:
     Ui::CourseEditorWindow *ui;
-    QStandardItemModel * mModel;
+    CourseModel * mModel;
     Course * mCourse;
 
     QDataWidgetMapper *mPromptMapper;
