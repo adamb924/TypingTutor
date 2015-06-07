@@ -7,6 +7,11 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
+Course::Course()
+{
+    mValid = true;
+}
+
 Course::Course(const QString &filename)
 {
     mValid = readXmlFile(filename);

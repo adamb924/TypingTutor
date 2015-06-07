@@ -12,6 +12,7 @@ class QXmlStreamReader;
 class Course
 {
 public:
+    Course();
     Course(const QString & filename);
     ~Course();
 

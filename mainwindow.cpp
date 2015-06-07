@@ -99,7 +99,12 @@ void MainWindow::saveCourseAs()
 
 void MainWindow::newCourse()
 {
-
+    if( mCourse != 0 )
+        delete mCourse;
+    mCourse = new Course;
+    mCourse->setName(tr("New Course"));
+    mCourse->setConclusionHeader(tr("Conclusion"));
+    setupCourseLayout();
 }
 
 void MainWindow::setupCourseLayout()
