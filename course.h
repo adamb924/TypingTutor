@@ -26,9 +26,13 @@ public:
 
     QString textEntryStyle() const;
     QString promptStyle() const;
-
     QString headerStyle() const;
     QString descriptionStyle() const;
+
+    void setTextEntryStyle(const QString & str);
+    void setPromptStyle(const QString & str);
+    void setHeaderStyle(const QString & str);
+    void setDescriptionStyle(const QString & str);
 
     const Keyboard *keyboard() const;
     Keyboard *keyboard();

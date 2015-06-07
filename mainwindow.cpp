@@ -6,6 +6,7 @@
 #include "courseeditorwindow.h"
 #include "coursemodel.h"
 #include "keyboardeditorwindow.h"
+#include "edittextstylesdialog.h"
 
 #include <QStackedWidget>
 #include <QLabel>
@@ -38,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->actionSave_course, SIGNAL(triggered()), this, SLOT(saveCourse()) );
     connect( ui->actionSave_course_as, SIGNAL(triggered()), this, SLOT(saveCourseAs()) );
     connect( ui->actionNew_course, SIGNAL(triggered()), this, SLOT(newCourse()) );
+
+    connect( ui->actionEdit_text_styles, SIGNAL(triggered()), this, SLOT(editTextStyles()) );
 
     connect( ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -124,17 +127,13 @@ void MainWindow::setupCourseLayout()
 
     ui->actionEdit_course->setEnabled(true);
     ui->actionEdit_keyboard->setEnabled(true);
+    ui->actionEdit_text_styles->setEnabled(true);
 
     ui->hintLabel->setText("");
 
     ui->treeView->setModel(mModel);
     ui->treeView->hideColumn(1);
     ui->treeView->setHeaderHidden(true);
-
-    // user-defined styles
-    ui->headerLabel->setStyleSheet( mCourse->headerStyle() );
-    ui->descriptionLabel->setStyleSheet( mCourse->descriptionStyle() );
-    ui->hintLabel->setStyleSheet(mCourse->promptStyle());
 
     // description
     mDescriptionMapper = new QDataWidgetMapper;
@@ -144,15 +143,26 @@ void MainWindow::setupCourseLayout()
     mDescriptionMapper->toFirst();
 
     ui->promptPage->setModel(mModel);
-    ui->promptPage->setDescriptionStyle( mCourse->descriptionStyle() );
-    ui->promptPage->setTextEditStyle( mCourse->textEntryStyle() );
 
     connect( ui->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex,QModelIndex)));
 
     ui->treeView->setModel( mModel );
 
+    setStyles();
+
     QModelIndex index = mModel->index(0,0);
     selectIndex( index );
+}
+
+void MainWindow::setStyles()
+{
+    ui->promptPage->setDescriptionStyle( mCourse->descriptionStyle() );
+    ui->promptPage->setTextEditStyle( mCourse->textEntryStyle() );
+
+    // user-defined styles
+    ui->headerLabel->setStyleSheet( mCourse->headerStyle() );
+    ui->descriptionLabel->setStyleSheet( mCourse->descriptionStyle() );
+    ui->hintLabel->setStyleSheet(mCourse->promptStyle());
 }
 
 QModelIndex MainWindow::selectedOrFirst() const
@@ -213,6 +223,15 @@ void MainWindow::editKeyboard()
     KeyboardEditorWindow * editor = new KeyboardEditorWindow(mCourse->keyboard());
     editor->setStyles( mCourse->textEntryStyle(),  mCourse->promptStyle() );
     editor->show();
+}
+
+void MainWindow::editTextStyles()
+{
+    EditTextStylesDialog dialog(mCourse);
+    if( dialog.exec() == QDialog::Accepted )
+    {
+        setStyles();
+    }
 }
 
 void MainWindow::promptToMoveForward()

@@ -190,6 +190,7 @@ QPushButton {
     <addaction name="separator"/>
     <addaction name="actionEdit_course"/>
     <addaction name="actionEdit_keyboard"/>
+    <addaction name="actionEdit_text_styles"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -353,6 +354,14 @@ QPushButton {
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionEdit_text_styles">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Edit text styles...</string>
    </property>
   </action>
   <zorder>progressDock</zorder>

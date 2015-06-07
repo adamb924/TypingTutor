@@ -34,9 +34,11 @@ private slots:
     void newCourse();
     void editCourse();
     void editKeyboard();
+    void editTextStyles();
     void promptToMoveForward();
 
     void setupCourseLayout();
+    void setStyles();
     void nextSlide();
     void previousSlide();
 

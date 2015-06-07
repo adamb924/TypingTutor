@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     coursetreeview.cpp \
     keyboardeditorwindow.cpp \
     keyboardmodel.cpp \
-    keyboardlistview.cpp
+    keyboardlistview.cpp \
+    edittextstylesdialog.cpp
 
 HEADERS  += mainwindow.h \
     targethighlighter.h \
@@ -43,9 +44,11 @@ HEADERS  += mainwindow.h \
     coursetreeview.h \
     keyboardeditorwindow.h \
     keyboardmodel.h \
-    keyboardlistview.h
+    keyboardlistview.h \
+    edittextstylesdialog.h
 
 FORMS    += mainwindow.ui \
     promptform.ui \
     courseeditorwindow.ui \
-    keyboardeditorwindow.ui
+    keyboardeditorwindow.ui \
+    edittextstylesdialog.ui

@@ -72,6 +72,26 @@ QString Course::descriptionStyle() const
     return mDescriptionStyle;
 }
 
+void Course::setTextEntryStyle(const QString &str)
+{
+    mTextEntryStyle = str;
+}
+
+void Course::setPromptStyle(const QString &str)
+{
+    mPromptStyle = str;
+}
+
+void Course::setHeaderStyle(const QString &str)
+{
+    mHeaderStyle = str;
+}
+
+void Course::setDescriptionStyle(const QString &str)
+{
+    mDescriptionStyle = str;
+}
+
 const Keyboard *Course::keyboard() const
 {
     return &mKeyboard;
