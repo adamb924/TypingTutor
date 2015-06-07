@@ -313,7 +313,7 @@ QPushButton {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Edit course...</string>
+    <string>Edit course content...</string>
    </property>
   </action>
   <action name="actionEdit_keyboard">
