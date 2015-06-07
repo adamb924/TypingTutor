@@ -79,9 +79,12 @@ void MainWindow::openCourse()
 
 void MainWindow::saveCourse()
 {
-    if( mCourse != 0 && !mFilename.isEmpty() )
+    if( mCourse != 0 )
     {
-        mCourse->writeXmlFile(mFilename);
+        if( mFilename.isEmpty() )
+            saveCourseAs();
+        else
+            mCourse->writeXmlFile(mFilename);
     }
 }
 
