@@ -62,7 +62,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::openCourse()
 {
-    QString mFilename = QFileDialog::getOpenFileName(this, tr("Open File"),
+    mFilename = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                     "",
                                                     tr("Typing Courses (*.xml)"));
     if( mFilename.isEmpty() )
