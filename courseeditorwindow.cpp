@@ -19,7 +19,7 @@ CourseEditorWindow::CourseEditorWindow(Course * course, CourseModel * model, QWi
 
     ui->treeView->hideColumn(1);
 
-    connect( ui->treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)) );
+    connect( ui->treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(itemClicked(QModelIndex)) );
 
     ui->descriptionHeadingEdit->setStyleSheet( course->headerStyle() );
     ui->descriptionIntroductionEdit->setStyleSheet( course->descriptionStyle() );
