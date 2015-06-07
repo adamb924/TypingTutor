@@ -171,10 +171,7 @@ QPushButton {
      <string>File</string>
     </property>
     <addaction name="actionOpen_course"/>
-    <addaction name="separator"/>
-    <addaction name="actionNew_course"/>
-    <addaction name="actionSave_course"/>
-    <addaction name="actionSave_course_as"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -182,12 +179,21 @@ QPushButton {
     </property>
     <addaction name="actionShow_hint"/>
     <addaction name="actionShow_progress"/>
+   </widget>
+   <widget class="QMenu" name="menuEditing">
+    <property name="title">
+     <string>Editing</string>
+    </property>
+    <addaction name="actionNew_course"/>
+    <addaction name="actionSave_course"/>
+    <addaction name="actionSave_course_as"/>
     <addaction name="separator"/>
     <addaction name="actionEdit_course"/>
     <addaction name="actionEdit_keyboard"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuEditing"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="styleSheet">
@@ -339,6 +345,14 @@ QPushButton {
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <zorder>progressDock</zorder>

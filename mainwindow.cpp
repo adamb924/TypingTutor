@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->actionSave_course_as, SIGNAL(triggered()), this, SLOT(saveCourseAs()) );
     connect( ui->actionNew_course, SIGNAL(triggered()), this, SLOT(newCourse()) );
 
+    connect( ui->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+
     ui->progressDock->hide();
     ui->hintDock->hide();
     ui->previousButton->hide();
