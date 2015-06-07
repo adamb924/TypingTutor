@@ -48,7 +48,7 @@ QModelIndex CourseModel::parent(const QModelIndex &index) const
     Prompt *p = qobject_cast<Prompt*>(o);
     if( p != 0 )
     {
-        int section = mCourse->whichSection(p);
+        int section = mCourse->getSectionIndex(p);
         if( section != -1 )
         {
             Q_ASSERT( section < mCourse->sections()->count() );
@@ -96,7 +96,7 @@ QVariant CourseModel::data(const QModelIndex &index, int role) const
     }
     else
     {
-        Prompt *p = static_cast<Prompt*>(o);
+        Prompt *p = qobject_cast<Prompt*>(o);
         if( p != 0 )
         {
             if( index.column() == 0 )
@@ -197,7 +197,7 @@ bool CourseModel::setData(const QModelIndex &index, const QVariant &value, int r
     }
     else
     {
-        Prompt *p = static_cast<Prompt*>(o);
+        Prompt *p = qobject_cast<Prompt*>(o);
         if( p != 0 )
         {
             if( index.column() == 0 )
@@ -266,10 +266,10 @@ bool CourseModel::insertRows(int row, int count, const QModelIndex &parent)
         }
         else
         {
-            Prompt *p = static_cast<Prompt*>(o);
+            Prompt *p = qobject_cast<Prompt*>(o);
             if( p != 0 )
             {
-                int sectionIndex = mCourse->whichSection( p );
+                int sectionIndex = mCourse->getSectionIndex( p );
                 if( sectionIndex != -1 )
                 {
                     Section * section = mCourse->sections()->at(sectionIndex);
@@ -293,11 +293,53 @@ bool CourseModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool CourseModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
 {
-    Q_UNUSED(sourceParent);
-    Q_UNUSED(sourceRow);
     Q_UNUSED(count);
-    Q_UNUSED(destinationParent);
-    Q_UNUSED(destinationChild);
-    qDebug() << "Moving rows";
+
+    QModelIndex source = sourceParent.isValid() ? sourceParent.child(sourceRow, 0) : index(sourceRow, 0);
+    QModelIndex destination = destinationParent.isValid() ? destinationParent.child(destinationChild, 0) : index(destinationChild, 0);
+    if( source.isValid() && destination.isValid() )
+    {
+        QObject * oSource = static_cast<QObject*>(source.internalPointer());
+        Section *sSource = qobject_cast<Section*>(oSource);
+        Prompt *pSource = qobject_cast<Prompt*>(oSource);
+
+        QObject * oDestination = static_cast<QObject*>(destination.internalPointer());
+        Section *sDestination = qobject_cast<Section*>(oDestination);
+        Prompt *pDestination = qobject_cast<Prompt*>(oDestination);
+
+        if( pSource && pDestination )
+        {
+            Section * sourceSection = mCourse->getSection(pSource);
+            Section * destinationSection = mCourse->getSection(pDestination);
+            if( sourceSection && destinationSection )
+            {
+                beginMoveRows(sourceParent, sourceRow, sourceRow, destinationParent, destinationChild);
+                sourceSection->prompts()->removeAt( sourceSection->prompts()->indexOf(pSource) );
+                destinationSection->addPromptAt( pSource, pDestination );
+                endMoveRows();
+            }
+        }
+        else if ( pSource && sDestination )
+        {
+            Section * sourceSection = mCourse->getSection(pSource);
+            if( sourceSection )
+            {
+                beginMoveRows(sourceParent, sourceRow, sourceRow, destinationParent, destinationChild);
+                sourceSection->prompts()->removeAt( sourceSection->prompts()->indexOf(pSource) );
+                sDestination->addPrompt( pSource );
+                endMoveRows();
+            }
+        }
+        else if ( sSource && sDestination )
+        {
+            int source = mCourse->sections()->indexOf( sSource );
+            beginMoveRows(sourceParent, sourceRow, sourceRow, destinationParent, destinationChild);
+            mCourse->sections()->removeAt( source );
+            int destination = mCourse->sections()->indexOf( sDestination );
+            mCourse->insertSectionAt( sSource , destination );
+            endMoveRows();
+        }
+    }
+
     return true;
 }

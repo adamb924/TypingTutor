@@ -11,6 +11,7 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
+    void dropEvent(QDropEvent * event);
 
 public slots:
     void selectRow(const QModelIndex & parent, int start, int end);

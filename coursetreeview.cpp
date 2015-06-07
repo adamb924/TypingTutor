@@ -43,6 +43,16 @@ void CourseTreeView::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(event->globalPos());
 }
 
+void CourseTreeView::dropEvent(QDropEvent *event)
+{
+    QModelIndex target = indexAt( event->pos() );
+    if( target.isValid() && currentIndex().isValid() )
+    {
+        model()->moveRow( currentIndex().parent() , currentIndex().row(), target.parent(), target.row() );
+//        expand( indexAt( event->pos() ) );
+    }
+}
+
 void CourseTreeView::insertSection()
 {
     QModelIndex index = currentIndex();
@@ -69,7 +79,7 @@ void CourseTreeView::insertPrompt()
         {
             model()->insertRow( 0 , index );
         }
-        expand(index);
+//        expand(index);
     }
 }
 

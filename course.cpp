@@ -104,7 +104,7 @@ void Course::removeSectionAt(int i)
     delete mSections.takeAt( i );
 }
 
-int Course::whichSection(const Prompt *prompt) const
+int Course::getSectionIndex(const Prompt *prompt) const
 {
     for(int i=0; i<mSections.count(); i++)
     {
@@ -117,6 +117,15 @@ int Course::whichSection(const Prompt *prompt) const
         }
     }
     return -1;
+}
+
+Section *Course::getSection(const Prompt *prompt)
+{
+    int index = getSectionIndex(prompt);
+    if( index != -1 )
+    {
+        return mSections.at(index);
+    }
 }
 
 bool Course::readXmlFile(const QString &filename)

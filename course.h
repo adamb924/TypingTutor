@@ -38,7 +38,8 @@ public:
 
     void insertSectionAt(Section * section, int i);
     void removeSectionAt(int i);
-    int whichSection(const Prompt * prompt) const;
+    int getSectionIndex(const Prompt * prompt) const;
+    Section * getSection(const Prompt * prompt);
 
 private:
     bool readXmlFile(const QString & filename);
