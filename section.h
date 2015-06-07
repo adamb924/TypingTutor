@@ -19,7 +19,11 @@ public:
     void setName(const QString & str);
     void setDescription(const QString & str);
 
+    void removePromptAt(int i);
+
     void addPrompt(Prompt * p);
+    void addPromptAtBeginning(Prompt * p);
+    void addPromptAt(Prompt * p, Prompt *before);
 
     QList<Prompt*>* prompts();
 

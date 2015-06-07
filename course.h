@@ -36,6 +36,8 @@ public:
     void setConclusionHeader(const QString & str);
     void setConclusionMessage(const QString & str);
 
+    void insertSectionAt(Section * section, int i);
+    void removeSectionAt(int i);
     int whichSection(const Prompt * prompt) const;
 
 private:

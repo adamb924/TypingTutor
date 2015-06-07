@@ -26,7 +26,7 @@ QModelIndex CourseModel::index(int row, int column, const QModelIndex &parent) c
     }
     else // first-level element
     {
-        if( row == 0 || row == rowCount() - 1 ) // intro/conclusion
+        if( row == 0 || row == mCourse->sections()->count() +1 ) // intro/conclusion
         {
             ptr = 0;
         }
@@ -76,7 +76,7 @@ QVariant CourseModel::data(const QModelIndex &index, int role) const
             else
                 return mCourse->description();
         }
-        else if ( index.row() == rowCount() - 1 ) // conclusion
+        else if ( index.row() == mCourse->sections()->count() + 1 ) // conclusion
         {
             if( index.column() == 0 )
                 return mCourse->conclusionHeader();
@@ -113,7 +113,7 @@ Qt::ItemFlags CourseModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return 0;
 
-    return Qt::ItemIsSelectable	| Qt::ItemIsEditable | Qt::ItemIsEnabled;
+    return Qt::ItemIsSelectable	| Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 QVariant CourseModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -173,7 +173,7 @@ bool CourseModel::setData(const QModelIndex &index, const QVariant &value, int r
             emit dataChanged(index, index, rolesVector);
             return true;
         }
-        else if ( index.row() == rowCount() - 1 ) // conclusion
+        else if ( index.row() == mCourse->sections()->count() - 1 ) // conclusion
         {
             if( index.column() == 0 )
                 mCourse->setConclusionHeader( value.toString() );
@@ -210,4 +210,94 @@ bool CourseModel::setData(const QModelIndex &index, const QVariant &value, int r
     }
 
     return false;
+}
+
+Qt::DropActions CourseModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
+Qt::DropActions CourseModel::supportedDragActions() const
+{
+    return Qt::MoveAction;
+}
+
+bool CourseModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if( parent.isValid() )
+    {
+        beginRemoveRows(parent, row, row+count-1);
+        QObject * o = static_cast<QObject*>(parent.internalPointer());
+        Section *s = qobject_cast<Section*>(o);
+        if( s != 0 )
+        {
+            for(int i=0; i<count; i++)
+            {
+                s->removePromptAt(row);
+            }
+        }
+        endRemoveRows();
+        return true;
+    }
+    else
+    {
+        beginRemoveRows(parent, row, row+count-1);
+        for(int i=0; i<count; i++)
+        {
+            mCourse->removeSectionAt( row - 1 );
+        }
+        endRemoveRows();
+        return false;
+    }
+}
+
+bool CourseModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    Q_UNUSED(count);
+    if( parent.isValid() )
+    {
+        QObject * o = static_cast<QObject*>(parent.internalPointer());
+        Section *s = qobject_cast<Section*>(o);
+        if( s != 0 )
+        {
+            beginInsertRows(parent, row, row);
+            s->addPromptAtBeginning( new Prompt(tr("New Prompt"), tr("")) );
+            endInsertRows();
+        }
+        else
+        {
+            Prompt *p = static_cast<Prompt*>(o);
+            if( p != 0 )
+            {
+                int sectionIndex = mCourse->whichSection( p );
+                if( sectionIndex != -1 )
+                {
+                    Section * section = mCourse->sections()->at(sectionIndex);
+                    beginInsertRows(parent, row, row);
+                    section->addPromptAt( new Prompt(tr("New Prompt"), tr("")) , p );
+                    endInsertRows();
+                }
+            }
+        }
+    }
+    else
+    {
+        beginInsertRows(parent, row, row);
+        /// minus one to account for the header
+        mCourse->insertSectionAt( new Section(tr("New section"),tr(""),tr(""),tr("")) , row - 1 );
+        endInsertRows();
+    }
+
+    return true;
+}
+
+bool CourseModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
+{
+    Q_UNUSED(sourceParent);
+    Q_UNUSED(sourceRow);
+    Q_UNUSED(count);
+    Q_UNUSED(destinationParent);
+    Q_UNUSED(destinationChild);
+    qDebug() << "Moving rows";
+    return true;
 }

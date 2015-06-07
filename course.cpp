@@ -92,6 +92,18 @@ void Course::setConclusionMessage(const QString &str)
     mConclusionMessage = str;
 }
 
+void Course::insertSectionAt(Section *section, int i)
+{
+    Q_ASSERT( i < mSections.count() );
+    mSections.insert( i, section );
+}
+
+void Course::removeSectionAt(int i)
+{
+    Q_ASSERT( i < mSections.count() );
+    delete mSections.takeAt( i );
+}
+
 int Course::whichSection(const Prompt *prompt) const
 {
     for(int i=0; i<mSections.count(); i++)

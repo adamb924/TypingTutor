@@ -21,6 +21,12 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
+    Qt::DropActions supportedDropActions() const;
+    Qt::DropActions supportedDragActions() const;
+    bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    bool insertRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild);
+
 signals:
 
 public slots:

@@ -16,18 +16,18 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
     <item>
-     <widget class="QTreeView" name="treeView">
+     <widget class="CourseTreeView" name="treeView">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
       <property name="dragEnabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="dragDropMode">
        <enum>QAbstractItemView::InternalMove</enum>
       </property>
       <property name="defaultDropAction">
-       <enum>Qt::IgnoreAction</enum>
+       <enum>Qt::MoveAction</enum>
       </property>
       <property name="headerHidden">
        <bool>true</bool>
@@ -108,6 +108,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CourseTreeView</class>
+   <extends>QTreeView</extends>
+   <header>coursetreeview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
