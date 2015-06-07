@@ -8,20 +8,23 @@ class Keyboard
 {
 public:
     Keyboard();
+    ~Keyboard();
 
     QString name() const;
 
     void setName(const QString & name);
-    void appendLetter( const Letter & letter );
+    void appendLetter(Letter *letter );
 
     bool isValid() const;
 
     QString nextThingToType(const QString & remainder) const;
     QString nextHint(const QString & remainder) const;
 
+    QList<Letter*>* letters();
+
 private:
     QString mName;
-    QList<Letter> mLetters;
+    QList<Letter*> mLetters;
 };
 
 #endif // KEYBOARD_H

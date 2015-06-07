@@ -5,6 +5,7 @@
 #include "promptform.h"
 #include "courseeditorwindow.h"
 #include "coursemodel.h"
+#include "keyboardeditorwindow.h"
 
 #include <QStackedWidget>
 #include <QLabel>
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->progressDock, SIGNAL(visibilityChanged(bool)), ui->actionShow_progress, SLOT(setChecked(bool)) );
     connect( ui->actionShow_progress, SIGNAL(toggled(bool)), ui->progressDock, SLOT(setVisible(bool)) );
     connect( ui->actionEdit_course, SIGNAL(triggered()), this, SLOT(editCourse()) );
+    connect( ui->actionEdit_keyboard, SIGNAL(triggered()), this, SLOT(editKeyboard()) );
     connect( ui->nextButton, SIGNAL(clicked()), this, SLOT(nextSlide()) );
     connect( ui->previousButton, SIGNAL(clicked()), this, SLOT(previousSlide()) );
     connect( ui->skipButton, SIGNAL(clicked()), this, SLOT(nextSlide()) );
@@ -82,6 +84,7 @@ void MainWindow::setupCourseLayout()
     mModel = new CourseModel(mCourse);
 
     ui->actionEdit_course->setEnabled(true);
+    ui->actionEdit_keyboard->setEnabled(true);
 
     ui->hintLabel->setText("");
 
@@ -163,6 +166,13 @@ void MainWindow::setHint(const QString &newHint)
 void MainWindow::editCourse()
 {
     CourseEditorWindow * editor = new CourseEditorWindow(mCourse, mModel);
+    editor->show();
+}
+
+void MainWindow::editKeyboard()
+{
+    KeyboardEditorWindow * editor = new KeyboardEditorWindow(mCourse->keyboard());
+    editor->setStyles( mCourse->textEntryStyle(),  mCourse->promptStyle() );
     editor->show();
 }
 

@@ -24,7 +24,10 @@ SOURCES += main.cpp\
     shortcuttextedit.cpp \
     courseeditorwindow.cpp \
     coursemodel.cpp \
-    coursetreeview.cpp
+    coursetreeview.cpp \
+    keyboardeditorwindow.cpp \
+    keyboardmodel.cpp \
+    keyboardlistview.cpp
 
 HEADERS  += mainwindow.h \
     targethighlighter.h \
@@ -37,8 +40,12 @@ HEADERS  += mainwindow.h \
     shortcuttextedit.h \
     courseeditorwindow.h \
     coursemodel.h \
-    coursetreeview.h
+    coursetreeview.h \
+    keyboardeditorwindow.h \
+    keyboardmodel.h \
+    keyboardlistview.h
 
 FORMS    += mainwindow.ui \
     promptform.ui \
-    courseeditorwindow.ui
+    courseeditorwindow.ui \
+    keyboardeditorwindow.ui

@@ -30,6 +30,7 @@ public:
 private slots:
     void openCourse();
     void editCourse();
+    void editKeyboard();
     void promptToMoveForward();
 
     void setupCourseLayout();

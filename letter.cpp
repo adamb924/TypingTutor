@@ -21,3 +21,18 @@ QString Letter::prompt() const
 {
     return mPrompt;
 }
+
+void Letter::setUnicode(const QString &str)
+{
+    mUnicode = str;
+}
+
+void Letter::setHint(const QString &str)
+{
+    mHint = str;
+}
+
+void Letter::setPrompt(const QString &str)
+{
+    mPrompt = str;
+}

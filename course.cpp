@@ -72,6 +72,11 @@ const Keyboard *Course::keyboard() const
     return &mKeyboard;
 }
 
+Keyboard *Course::keyboard()
+{
+    return &mKeyboard;
+}
+
 void Course::setName(const QString &str)
 {
     mName = str;
@@ -126,6 +131,7 @@ Section *Course::getSection(const Prompt *prompt)
     {
         return mSections.at(index);
     }
+    return 0;
 }
 
 bool Course::readXmlFile(const QString &filename)
@@ -231,7 +237,7 @@ bool Course::readXmlFile(const QString &filename)
                         && attr.hasAttribute("hint")
                         && attr.hasAttribute("prompt") )
                 {
-                    mKeyboard.appendLetter( Letter( attr.value("unicode").toString() , attr.value("hint").toString() , attr.value("prompt").toString() ) );
+                    mKeyboard.appendLetter( new Letter( attr.value("unicode").toString() , attr.value("hint").toString() , attr.value("prompt").toString() ) );
                 }
             }
             else if ( xml.name() == "keyboard" )

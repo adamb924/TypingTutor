@@ -30,6 +30,7 @@ public:
     QString descriptionStyle() const;
 
     const Keyboard *keyboard() const;
+    Keyboard *keyboard();
 
     void setName(const QString & str);
     void setDescription(const QString & str);

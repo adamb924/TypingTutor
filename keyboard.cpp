@@ -8,6 +8,11 @@ Keyboard::Keyboard()
 {
 }
 
+Keyboard::~Keyboard()
+{
+    qDeleteAll(mLetters);
+}
+
 QString Keyboard::name() const
 {
     return mName;
@@ -18,7 +23,7 @@ void Keyboard::setName(const QString &name)
     mName = name;
 }
 
-void Keyboard::appendLetter(const Letter &letter)
+void Keyboard::appendLetter(Letter * letter)
 {
     mLetters.append(letter);
 }
@@ -32,9 +37,9 @@ QString Keyboard::nextThingToType(const QString &remainder) const
 {
     for(int i=0; i<mLetters.count(); i++)
     {
-        if( remainder.startsWith( mLetters.at(i).unicode() ) )
+        if( remainder.startsWith( mLetters.at(i)->unicode() ) )
         {
-            return mLetters.at(i).prompt();
+            return mLetters.at(i)->prompt();
         }
     }
     qWarning() << QString("%1").arg( remainder.at(0).unicode() , 0, 16);
@@ -45,11 +50,16 @@ QString Keyboard::nextHint(const QString &remainder) const
 {
     for(int i=0; i<mLetters.count(); i++)
     {
-        if( remainder.startsWith( mLetters.at(i).unicode() ) )
+        if( remainder.startsWith( mLetters.at(i)->unicode() ) )
         {
-            return mLetters.at(i).hint();
+            return mLetters.at(i)->hint();
         }
     }
     qWarning() << QString("%1").arg( remainder.at(0).unicode() , 0, 16);
     return "Err";
+}
+
+QList<Letter *> *Keyboard::letters()
+{
+    return &mLetters;
 }

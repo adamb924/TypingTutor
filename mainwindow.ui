@@ -180,6 +180,7 @@ QPushButton {
     <addaction name="actionShow_progress"/>
     <addaction name="separator"/>
     <addaction name="actionEdit_course"/>
+    <addaction name="actionEdit_keyboard"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -302,6 +303,14 @@ QPushButton {
    </property>
    <property name="text">
     <string>Edit course...</string>
+   </property>
+  </action>
+  <action name="actionEdit_keyboard">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Edit keyboard...</string>
    </property>
   </action>
   <zorder>progressDock</zorder>
