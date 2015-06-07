@@ -1,7 +1,7 @@
 #include "section.h"
 
-Section::Section(const QString &name, const QString &description, const QString &conclusionHeader, const QString &conclusionMessage) :
-    mName(name), mDescription(description), mConclusionHeader(conclusionHeader), mConclusionMessage(conclusionMessage)
+Section::Section(const QString &name, const QString &description) :
+    mName(name), mDescription(description)
 {
 }
 
@@ -53,14 +53,4 @@ void Section::addPromptAt(Prompt *p, Prompt *before)
 QList<Prompt *> *Section::prompts()
 {
     return &mPrompts;
-}
-
-QString Section::conclusionHeader() const
-{
-    return mConclusionHeader;
-}
-
-QString Section::conclusionMessage() const
-{
-    return mConclusionMessage;
 }

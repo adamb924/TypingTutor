@@ -35,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->promptPage, SIGNAL(inputPrompt(QString)), statusBar(), SLOT(showMessage(QString)) );
     connect( ui->promptPage, SIGNAL(textEnteredCorrectly()), this, SLOT(promptToMoveForward()) );
 
+    connect( ui->actionSave_course, SIGNAL(triggered()), this, SLOT(saveCourse()) );
+    connect( ui->actionSave_course_as, SIGNAL(triggered()), this, SLOT(saveCourseAs()) );
+    connect( ui->actionNew_course, SIGNAL(triggered()), this, SLOT(newCourse()) );
+
     ui->progressDock->hide();
     ui->hintDock->hide();
     ui->previousButton->hide();
@@ -53,10 +57,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::openCourse()
 {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
+    QString mFilename = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                     "",
                                                     tr("Typing Courses (*.xml)"));
-    if( filename.isEmpty() )
+    if( mFilename.isEmpty() )
     {
         return;
     }
@@ -64,11 +68,36 @@ void MainWindow::openCourse()
     {
         delete mCourse;
     }
-    mCourse = new Course(filename);
+    mCourse = new Course(mFilename);
     if( mCourse->isValid() )
     {
         setupCourseLayout();
     }
+}
+
+void MainWindow::saveCourse()
+{
+    if( mCourse != 0 && !mFilename.isEmpty() )
+    {
+        mCourse->writeXmlFile(mFilename);
+    }
+}
+
+void MainWindow::saveCourseAs()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save Course"),
+                               "",
+                               tr("XML Files (*.xml)"));
+    if( !filename.isEmpty() )
+    {
+        mFilename = filename;
+        saveCourse();
+    }
+}
+
+void MainWindow::newCourse()
+{
+
 }
 
 void MainWindow::setupCourseLayout()

@@ -11,7 +11,7 @@ class Section : public QObject
 {
     Q_OBJECT
 public:
-    Section(const QString & name, const QString & description, const QString & conclusionHeader, const QString & conclusionMessage);
+    Section(const QString & name = QString(), const QString & description = QString());
 
     QString name() const;
     QString description() const;
@@ -27,15 +27,9 @@ public:
 
     QList<Prompt*>* prompts();
 
-    QString conclusionHeader() const;
-    QString conclusionMessage() const;
-
 private:
     QString mName;
     QString mDescription;
-
-    QString mConclusionHeader;
-    QString mConclusionMessage;
 
     QList<Prompt*> mPrompts;
 };

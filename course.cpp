@@ -42,11 +42,6 @@ QString Course::conclusionMessage() const
     return mConclusionMessage;
 }
 
-QString Course::keyboardFilename() const
-{
-    return mKeyboardFilename;
-}
-
 QString Course::textEntryStyle() const
 {
     return mTextEntryStyle;
@@ -134,6 +129,80 @@ Section *Course::getSection(const Prompt *prompt)
     return 0;
 }
 
+void Course::writeXmlFile(const QString &filename)
+{
+    QFile file(filename);
+    file.open(QFile::WriteOnly);
+    QXmlStreamWriter stream(&file);
+
+    stream.setCodec("UTF-8");
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+
+    stream.writeStartElement("course");
+    stream.writeAttribute("name", mName );
+    stream.writeAttribute("text-entry-style", mTextEntryStyle );
+    stream.writeAttribute("prompt-style", mPromptStyle );
+    stream.writeAttribute("header-style", mHeaderStyle );
+    stream.writeAttribute("description-style", mDescriptionStyle );
+
+    stream.writeStartElement("course-description");
+    stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
+    stream.writeCharacters("");
+    stream.device()->write( mDescription.toUtf8() );
+    stream.writeEndElement();
+
+    stream.writeStartElement("course-conclusion");
+    stream.writeAttribute("header", mConclusionHeader);
+    stream.writeCharacters("");
+    stream.device()->write( mConclusionMessage.toUtf8() );
+    stream.writeEndElement();
+
+    for(int i=0; i<mSections.count(); i++)
+    {
+        stream.writeStartElement("section");
+        stream.writeAttribute("name", mSections.at(i)->name() );
+
+        stream.writeStartElement("section-description");
+        stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
+        stream.writeCharacters("");
+        stream.device()->write( mSections.at(i)->description().toUtf8() );
+        stream.writeEndElement();
+
+        for(int j=0; j<mSections.at(i)->prompts()->count(); j++)
+        {
+            stream.writeStartElement("prompt");
+
+            stream.writeStartElement("prompt-description");
+            stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
+            stream.writeCharacters("");
+            stream.device()->write( mSections.at(i)->prompts()->at(j)->description().toUtf8() );
+            stream.writeEndElement();
+
+            stream.writeTextElement("target-text", mSections.at(i)->prompts()->at(j)->targetText() );
+
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
+    }
+
+    stream.writeStartElement("keyboard");
+    stream.writeAttribute("name", mKeyboard.name() );
+    for(int i=0; i<mKeyboard.letters()->count(); i++)
+    {
+        stream.writeEmptyElement("letter");
+        stream.writeAttribute("unicode", mKeyboard.letters()->at(i)->unicode() );
+        stream.writeAttribute("hint", mKeyboard.letters()->at(i)->hint() );
+        stream.writeAttribute("prompt", mKeyboard.letters()->at(i)->prompt() );
+    }
+
+    stream.writeEndElement(); // keyboard
+
+    stream.writeEndElement(); // course
+
+    stream.writeEndDocument();
+}
+
 bool Course::readXmlFile(const QString &filename)
 {
     QFile file(filename);
@@ -145,7 +214,6 @@ bool Course::readXmlFile(const QString &filename)
     {
         QXmlStreamAttributes  attr = xml.attributes();
         if( attr.hasAttribute("name")
-                && attr.hasAttribute("keyboard-filename")
                 && attr.hasAttribute("text-entry-style")
                 && attr.hasAttribute("prompt-style")
                 && attr.hasAttribute("header-style")
@@ -153,7 +221,6 @@ bool Course::readXmlFile(const QString &filename)
                 )
         {
             mName = attr.value("name").toString();
-            mKeyboardFilename = attr.value("keyboard-filename").toString();
             mTextEntryStyle = attr.value("text-entry-style").toString();
             mPromptStyle = attr.value("prompt-style").toString();
             mHeaderStyle = attr.value("header-style").toString();
@@ -185,7 +252,7 @@ bool Course::readXmlFile(const QString &filename)
         {
             if ( xml.name() == "section" )
             {
-                QString name, description, conclusionHeader, conclusionMessage;
+                QString name, description;
                 QXmlStreamAttributes  attr = xml.attributes();
                 if( attr.hasAttribute("name") )
                 {
@@ -198,18 +265,7 @@ bool Course::readXmlFile(const QString &filename)
                     description = readHtml(xml);
                 }
 
-                xml.readNextStartElement();
-                if ( xml.name() == "section-conclusion" )
-                {
-                    QXmlStreamAttributes  attr = xml.attributes();
-                    if( attr.hasAttribute("header") )
-                    {
-                        conclusionHeader = attr.value("header").toString();
-                    }
-                    conclusionMessage = readHtml(xml);
-                }
-
-                mSections.append( new Section(name, description, conclusionHeader, conclusionMessage) );
+                mSections.append( new Section(name, description) );
             }
             else if ( xml.name() == "prompt" )
             {

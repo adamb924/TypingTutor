@@ -21,7 +21,6 @@ public:
 
     QString conclusionHeader() const;
     QString conclusionMessage() const;
-    QString keyboardFilename() const;
 
     QString textEntryStyle() const;
     QString promptStyle() const;
@@ -42,6 +41,8 @@ public:
     int getSectionIndex(const Prompt * prompt) const;
     Section * getSection(const Prompt * prompt);
 
+    void writeXmlFile(const QString & filename);
+
 private:
     bool readXmlFile(const QString & filename);
     QString readHtml( QXmlStreamReader &xml );
@@ -50,7 +51,6 @@ private:
     QString mDescription;
     QString mConclusionHeader;
     QString mConclusionMessage;
-    QString mKeyboardFilename;
 
     QString mTextEntryStyle;
     QString mPromptStyle;

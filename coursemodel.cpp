@@ -284,7 +284,7 @@ bool CourseModel::insertRows(int row, int count, const QModelIndex &parent)
     {
         beginInsertRows(parent, row, row);
         /// minus one to account for the header
-        mCourse->insertSectionAt( new Section(tr("New section"),tr(""),tr(""),tr("")) , row - 1 );
+        mCourse->insertSectionAt( new Section(tr("New section")) , row - 1 );
         endInsertRows();
     }
 

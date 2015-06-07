@@ -29,6 +29,9 @@ public:
 
 private slots:
     void openCourse();
+    void saveCourse();
+    void saveCourseAs();
+    void newCourse();
     void editCourse();
     void editKeyboard();
     void promptToMoveForward();
@@ -52,6 +55,7 @@ private:
     CourseModel *mModel;
     Course * mCourse;
     QDataWidgetMapper *mDescriptionMapper;
+    QString mFilename;
 };
 
 #endif // MAINWINDOW_H
