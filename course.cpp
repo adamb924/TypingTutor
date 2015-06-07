@@ -12,6 +12,11 @@ Course::Course(const QString &filename)
     mValid = readXmlFile(filename);
 }
 
+Course::~Course()
+{
+    qDeleteAll(mSections);
+}
+
 QString Course::name() const
 {
     return mName;

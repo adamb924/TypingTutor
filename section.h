@@ -12,6 +12,7 @@ class Section : public QObject
     Q_OBJECT
 public:
     Section(const QString & name = QString(), const QString & description = QString());
+    ~Section();
 
     QString name() const;
     QString description() const;

@@ -5,6 +5,11 @@ Section::Section(const QString &name, const QString &description) :
 {
 }
 
+Section::~Section()
+{
+    qDeleteAll(mPrompts);
+}
+
 QString Section::name() const
 {
     return mName;

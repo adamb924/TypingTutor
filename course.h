@@ -13,6 +13,7 @@ class Course
 {
 public:
     Course(const QString & filename);
+    ~Course();
 
     QString name() const;
     QString description() const;

@@ -8,11 +8,14 @@
 
 KeyboardEditorWindow::KeyboardEditorWindow(Keyboard *keyboard, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::KeyboardEditorWindow)
+    ui(new Ui::KeyboardEditorWindow),
+    mKeyboard(keyboard)
 {
     ui->setupUi(this);
 
-    KeyboardModel * model = new KeyboardModel(keyboard);
+    KeyboardModel * model = new KeyboardModel(mKeyboard);
+
+    ui->keyboardNameEdit->setText(mKeyboard->name());
 
     ui->listView->setModel( model );
     ui->listView->setModelColumn(0);
@@ -24,6 +27,8 @@ KeyboardEditorWindow::KeyboardEditorWindow(Keyboard *keyboard, QWidget *parent) 
     mapper->addMapping( ui->promptEdit , 2);
 
     connect( ui->listView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), mapper, SLOT(setCurrentModelIndex(QModelIndex)) );
+    connect( ui->keyboardNameEdit, SIGNAL(textChanged(QString)), this, SLOT(setKeyboardName(QString)) );
+    connect( ui->copyUnicodePrompt, SIGNAL(clicked()), this, SLOT(copyUnicode()) );
 }
 
 KeyboardEditorWindow::~KeyboardEditorWindow()
@@ -40,4 +45,9 @@ void KeyboardEditorWindow::setStyles(const QString &unicode, const QString &prom
 void KeyboardEditorWindow::copyUnicode()
 {
     ui->promptEdit->setText( ui->unicodeEdit->text() );
+}
+
+void KeyboardEditorWindow::setKeyboardName(const QString &str)
+{
+    mKeyboard->setName(str);
 }

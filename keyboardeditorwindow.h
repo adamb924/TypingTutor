@@ -21,9 +21,11 @@ public:
 
 private slots:
     void copyUnicode();
+    void setKeyboardName(const QString & str);
 
 private:
     Ui::KeyboardEditorWindow *ui;
+    Keyboard * mKeyboard;
 };
 
 #endif // KEYBOARDEDITORWINDOW_H
