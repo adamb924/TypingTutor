@@ -70,6 +70,13 @@ void PromptForm::setIndex(const QModelIndex &index, const QModelIndex &root)
     mMapper->setCurrentModelIndex(index);
 }
 
+void PromptForm::setTextDirection(Qt::LayoutDirection direction)
+{
+    QTextOption option = ui->inputEdit->document()->defaultTextOption();
+    option.setTextDirection( direction );
+    ui->inputEdit->document()->setDefaultTextOption(option);
+}
+
 void PromptForm::updateTargetText()
 {
     mTargetHighlighter->setTargetText(mTargetText);

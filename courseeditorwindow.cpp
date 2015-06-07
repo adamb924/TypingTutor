@@ -26,6 +26,11 @@ CourseEditorWindow::CourseEditorWindow(Course * course, CourseModel * model, QWi
     ui->promptEdit->setStyleSheet( course->promptStyle() );
     ui->introductionEdit->setStyleSheet( course->descriptionStyle() );
 
+    QTextOption option = ui->promptEdit->document()->defaultTextOption();
+    option.setTextDirection( mCourse->textDirection() );
+    ui->promptEdit->document()->setDefaultTextOption(option);
+    ui->promptEdit->setLayoutDirection( mCourse->textDirection() );
+
     // description
     mDescriptionMapper = new QDataWidgetMapper;
     mDescriptionMapper->setModel(mModel);
@@ -35,7 +40,7 @@ CourseEditorWindow::CourseEditorWindow(Course * course, CourseModel * model, QWi
     // description
     mPromptMapper = new QDataWidgetMapper;
     mPromptMapper->setModel(mModel);
-    mPromptMapper->addMapping( ui->promptEdit, 0);
+    mPromptMapper->addMapping( ui->promptEdit, 0, "plainText");
     mPromptMapper->addMapping( ui->introductionEdit , 1);
 
     ui->stackedWidget->setCurrentIndex(1);

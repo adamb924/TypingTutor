@@ -39,6 +39,9 @@
     </item>
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
       <widget class="QWidget" name="promptTab">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -61,7 +64,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="promptEdit"/>
+           <widget class="QTextEdit" name="promptEdit"/>
           </item>
          </layout>
         </item>

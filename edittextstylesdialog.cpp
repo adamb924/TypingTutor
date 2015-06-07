@@ -17,6 +17,7 @@ EditTextStylesDialog::EditTextStylesDialog(Course *course, QWidget *parent) :
     ui->headerStyleEdit->setText( mCourse->headerStyle() );
     ui->descriptionStyleEdit->setText( mCourse->descriptionStyle() );
     ui->textEntryStyleEdit->setText( mCourse->textEntryStyle() );
+    ui->textDirectionCombo->setCurrentIndex( (int)mCourse->textDirection() );
 
     connect(ui->promptStyleButton, SIGNAL(clicked()), this, SLOT(choosePromptStyle()) );
     connect(ui->headerStyleButton, SIGNAL(clicked()), this, SLOT(chooseHeaderStyle()) );
@@ -70,6 +71,7 @@ void EditTextStylesDialog::chooseHeaderStyle()
 void EditTextStylesDialog::saveValues()
 {
     mCourse->setPromptStyle( ui->promptStyleEdit->text() );
+    mCourse->setTextDirection( (Qt::LayoutDirection)ui->textDirectionCombo->currentIndex() );
 }
 
 QString EditTextStylesDialog::styleFromFontDialog(const QString & initial) const

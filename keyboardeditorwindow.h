@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class Keyboard;
+class Course;
 
 namespace Ui {
 class KeyboardEditorWindow;
@@ -14,7 +15,7 @@ class KeyboardEditorWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    KeyboardEditorWindow(Keyboard * keyboard, QWidget *parent = 0);
+    KeyboardEditorWindow(Course *course, QWidget *parent = 0);
     ~KeyboardEditorWindow();
 
     void setStyles(const QString & unicode, const QString & prompt);

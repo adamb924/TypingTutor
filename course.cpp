@@ -175,6 +175,7 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeAttribute("prompt-style", mPromptStyle );
     stream.writeAttribute("header-style", mHeaderStyle );
     stream.writeAttribute("description-style", mDescriptionStyle );
+    stream.writeAttribute("layout-direction", QString("%1").arg(mLayoutDirection) );
 
     stream.writeStartElement("course-description");
     stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
@@ -248,6 +249,7 @@ bool Course::readXmlFile(const QString &filename)
                 && attr.hasAttribute("prompt-style")
                 && attr.hasAttribute("header-style")
                 && attr.hasAttribute("description-style")
+                && attr.hasAttribute("layout-direction")
                 )
         {
             mName = attr.value("name").toString();
@@ -255,6 +257,7 @@ bool Course::readXmlFile(const QString &filename)
             mPromptStyle = attr.value("prompt-style").toString();
             mHeaderStyle = attr.value("header-style").toString();
             mDescriptionStyle = attr.value("description-style").toString();
+            mLayoutDirection = (Qt::LayoutDirection)attr.value("layout-direction").toInt();
         }
     }
 
@@ -384,3 +387,14 @@ QString Course::readHtml(QXmlStreamReader &xml)
     while (!xml.atEnd() && xml.name() != terminatingElement );
     return html;
 }
+
+Qt::LayoutDirection Course::textDirection() const
+{
+    return mLayoutDirection;
+}
+
+void Course::setTextDirection(Qt::LayoutDirection value)
+{
+    mLayoutDirection = value;
+}
+

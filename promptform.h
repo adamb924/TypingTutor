@@ -30,6 +30,8 @@ public:
     void setModel(QAbstractItemModel * model);
     void setIndex(const QModelIndex & index, const QModelIndex & root);
 
+    void setTextDirection(Qt::LayoutDirection direction);
+
 signals:
     void textEnteredCorrectly();
     void inputPrompt(const QString & newPrompt);

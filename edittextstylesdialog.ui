@@ -7,13 +7,34 @@
     <x>0</x>
     <y>0</y>
     <width>593</width>
-    <height>317</height>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Edit Text Styles</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Text Direction for target language</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="textDirectionCombo">
+     <item>
+      <property name="text">
+       <string>Left-to-right</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Right-to-left</string>
+      </property>
+     </item>
+    </widget>
+   </item>
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">

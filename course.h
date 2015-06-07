@@ -49,6 +49,9 @@ public:
 
     void writeXmlFile(const QString & filename);
 
+    Qt::LayoutDirection textDirection() const;
+    void setTextDirection(Qt::LayoutDirection value);
+
 private:
     bool readXmlFile(const QString & filename);
     QString readHtml( QXmlStreamReader &xml );
@@ -65,6 +68,8 @@ private:
     QString mDescriptionStyle;
 
     bool mValid;
+
+    Qt::LayoutDirection mLayoutDirection;
 
     Keyboard mKeyboard;
 

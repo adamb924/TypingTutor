@@ -1,15 +1,16 @@
 #include "keyboardeditorwindow.h"
 #include "ui_keyboardeditorwindow.h"
 
+#include "course.h"
 #include "keyboard.h"
 #include "keyboardmodel.h"
 
 #include <QDataWidgetMapper>
 
-KeyboardEditorWindow::KeyboardEditorWindow(Keyboard *keyboard, QWidget *parent) :
+KeyboardEditorWindow::KeyboardEditorWindow(Course *course, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::KeyboardEditorWindow),
-    mKeyboard(keyboard)
+    mKeyboard(course->keyboard())
 {
     ui->setupUi(this);
 
@@ -19,6 +20,9 @@ KeyboardEditorWindow::KeyboardEditorWindow(Keyboard *keyboard, QWidget *parent) 
 
     ui->listView->setModel( model );
     ui->listView->setModelColumn(0);
+
+    ui->unicodeEdit->setLayoutDirection( course->textDirection() );
+    ui->promptEdit->setLayoutDirection( course->textDirection() );
 
     QDataWidgetMapper * mapper = new QDataWidgetMapper;
     mapper->setModel(model);

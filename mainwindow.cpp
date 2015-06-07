@@ -156,6 +156,7 @@ void MainWindow::setupCourseLayout()
 
 void MainWindow::setStyles()
 {
+    ui->promptPage->setTextDirection( mCourse->textDirection() );
     ui->promptPage->setDescriptionStyle( mCourse->descriptionStyle() );
     ui->promptPage->setTextEditStyle( mCourse->textEntryStyle() );
 
@@ -220,7 +221,7 @@ void MainWindow::editCourse()
 
 void MainWindow::editKeyboard()
 {
-    KeyboardEditorWindow * editor = new KeyboardEditorWindow(mCourse->keyboard());
+    KeyboardEditorWindow * editor = new KeyboardEditorWindow(mCourse);
     editor->setStyles( mCourse->textEntryStyle(),  mCourse->promptStyle() );
     editor->show();
 }
