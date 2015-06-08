@@ -2,6 +2,7 @@
 #include "ui_promptform.h"
 
 #include "targethighlighter.h"
+#include "course.h"
 #include "keyboard.h"
 
 #include <QKeyEvent>
@@ -11,14 +12,13 @@
 PromptForm::PromptForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PromptForm),
-    mKeyboard(0),
-    mMapper(0)
+    mMapper(0),
+    mTargetHighlighter(0)
 {
     ui->setupUi(this);
 
     ui->inputEdit->setFocusPolicy(Qt::StrongFocus);
     ui->inputEdit->setFocus(Qt::OtherFocusReason);
-    mTargetHighlighter = new TargetHighlighter(ui->inputEdit->document() );
 
     updateTargetTextDisplay();
     connect( ui->inputEdit, SIGNAL(textChanged()), this, SLOT(updateTargetTextDisplay()) );
@@ -30,9 +30,14 @@ PromptForm::~PromptForm()
     delete ui;
 }
 
-void PromptForm::setKeyboard(const Keyboard *kbd)
+void PromptForm::setCourse(const Course *course)
 {
-    mKeyboard = kbd;
+    mCourse = course;
+    if( mTargetHighlighter != 0 )
+    {
+        delete mTargetHighlighter;
+    }
+    mTargetHighlighter = new TargetHighlighter(mCourse, ui->inputEdit->document() );
 }
 
 void PromptForm::setDescriptionStyle(const QString &style)
@@ -84,7 +89,7 @@ void PromptForm::updateTargetText()
 
 void PromptForm::updateTargetTextDisplay()
 {
-    if( mKeyboard == 0 )
+    if( mCourse == 0 )
     {
         return;
     }
@@ -103,10 +108,10 @@ void PromptForm::updateTargetTextDisplay()
     if( matchLength < mTargetText.length() )
     {
         QString remainder = mTargetText.mid(matchLength);
-        emit showHint( mKeyboard->nextThingToType( remainder ) );
+        emit showHint( mCourse->keyboard()->nextThingToType( remainder ) );
         if( enteredText.length() > matchLength )
         {
-            emit inputPrompt( mKeyboard->nextHint(remainder) );
+            emit inputPrompt( mCourse->keyboard()->nextHint(remainder) );
         }
         else
         {
@@ -129,7 +134,7 @@ void PromptForm::updateTargetTextDisplay()
             {
                 targetHtml += QChar(0x200D);
             }
-            targetHtml += "<font style='color: blue'>";
+            targetHtml += "<font style='color: " + mCourse->remainderFg().name() + "; background-color: "+ mCourse->remainderBg().name() +";'>";
             if( charactersWillJoin )
             {
                 targetHtml += QChar(0x200D);

@@ -2,6 +2,7 @@
 #define EDITTEXTSTYLESDIALOG_H
 
 #include <QDialog>
+#include <QColor>
 
 class Course;
 
@@ -24,12 +25,20 @@ private slots:
     void chooseHeaderStyle();
     void saveValues();
 
+    void errorFg();
+    void errorBg();
+    void remainderFg();
+    void remainderBg();
+
 private:
     QString styleFromFontDialog(const QString &initial) const;
+    void setLabelStyles();
 
 private:
     Ui::EditTextStylesDialog *ui;
     Course * mCourse;
+    QColor mRemainderFg, mRemainderBg;
+    QColor mErrorFg, mErrorBg;
 };
 
 #endif // EDITTEXTSTYLESDIALOG_H

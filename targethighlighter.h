@@ -3,10 +3,12 @@
 
 #include <QSyntaxHighlighter>
 
+class Course;
+
 class TargetHighlighter : public QSyntaxHighlighter
 {
 public:
-    TargetHighlighter(QTextDocument *parent = 0);
+    TargetHighlighter(const Course * course, QTextDocument *parent = 0);
 
     void setTargetText(const QString & targetText);
 

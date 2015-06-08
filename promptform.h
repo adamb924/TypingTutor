@@ -13,6 +13,7 @@ class TargetHighlighter;
 class Keyboard;
 class QAbstractItemModel;
 class QDataWidgetMapper;
+class Course;
 
 class PromptForm : public QWidget
 {
@@ -23,7 +24,7 @@ public:
     PromptForm(QWidget *parent = 0);
     ~PromptForm();
 
-    void setKeyboard(const Keyboard * kbd);
+    void setCourse(const Course *course);
     void setDescriptionStyle(const QString & style);
     void setTextEditStyle(const QString & style);
     void clearInput();
@@ -50,7 +51,7 @@ private:
     QString mTargetText;
     QString mEnteredText;
     TargetHighlighter * mTargetHighlighter;
-    const Keyboard * mKeyboard;
+    const Course * mCourse;
     QDataWidgetMapper * mMapper;
 };
 

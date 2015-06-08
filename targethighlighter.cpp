@@ -3,12 +3,13 @@
 #include <QtDebug>
 
 #include "promptform.h"
+#include "course.h"
 
-TargetHighlighter::TargetHighlighter(QTextDocument *parent) :
+TargetHighlighter::TargetHighlighter(const Course *course, QTextDocument *parent) :
     QSyntaxHighlighter(parent)
 {
-    badFormat.setForeground(Qt::red);
-    badFormat.setBackground(Qt::lightGray);
+    badFormat.setForeground( course->errorFg() );
+    badFormat.setBackground( course->errorBg() );
 }
 
 void TargetHighlighter::setTargetText(const QString &targetText)

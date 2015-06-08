@@ -121,7 +121,7 @@ void MainWindow::setupCourseLayout()
         delete mModel;
     }
 
-    ui->promptPage->setKeyboard( mCourse->keyboard() );
+    ui->promptPage->setCourse( mCourse );
 
     mModel = new CourseModel(mCourse);
 
@@ -232,6 +232,7 @@ void MainWindow::editTextStyles()
     if( dialog.exec() == QDialog::Accepted )
     {
         setStyles();
+        ui->promptPage->setCourse(mCourse);
     }
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
-    <height>368</height>
+    <width>876</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,6 +114,56 @@
       <widget class="QPushButton" name="descriptionStyleButton">
        <property name="text">
         <string>Choose...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QPushButton" name="remainderFGButton">
+       <property name="text">
+        <string>Remainder text foreground</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="remainderBGButton">
+       <property name="text">
+        <string>Remainder text background</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="errorFGButton">
+       <property name="text">
+        <string>Error text foreground</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="errorBGButton">
+       <property name="text">
+        <string>Error text background</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QLabel" name="remainderLabel">
+       <property name="text">
+        <string>The remainder text is what remains for the learner to type.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="errorLabel">
+       <property name="text">
+        <string>Error text is text that the learner has typed incorrectly.</string>
        </property>
       </widget>
      </item>

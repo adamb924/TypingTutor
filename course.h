@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QColor>
 
 #include "section.h"
 #include "keyboard.h"
@@ -52,6 +53,18 @@ public:
     Qt::LayoutDirection textDirection() const;
     void setTextDirection(Qt::LayoutDirection value);
 
+    QColor remainderFg() const;
+    void setRemainderFg(const QColor &value);
+
+    QColor remainderBg() const;
+    void setRemainderBg(const QColor &value);
+
+    QColor errorFg() const;
+    void setErrorFg(const QColor &value);
+
+    QColor errorBg() const;
+    void setErrorBg(const QColor &value);
+
 private:
     bool readXmlFile(const QString & filename);
     QString readHtml( QXmlStreamReader &xml );
@@ -74,6 +87,9 @@ private:
     Keyboard mKeyboard;
 
     QList<Section*> mSections;
+
+    QColor mRemainderFg, mRemainderBg;
+    QColor mErrorFg, mErrorBg;
 };
 
 #endif // COURSE_H

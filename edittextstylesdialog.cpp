@@ -3,6 +3,7 @@
 
 #include <QFontDialog>
 #include <QtDebug>
+#include <QColorDialog>
 
 #include "course.h"
 
@@ -23,6 +24,18 @@ EditTextStylesDialog::EditTextStylesDialog(Course *course, QWidget *parent) :
     connect(ui->headerStyleButton, SIGNAL(clicked()), this, SLOT(chooseHeaderStyle()) );
     connect(ui->descriptionStyleButton, SIGNAL(clicked()), this, SLOT(chooseDescriptionStyle()) );
     connect(ui->textEntryStyleButton, SIGNAL(clicked()), this, SLOT(chooseTextEntryStyle()) );
+
+    mRemainderFg = mCourse->remainderFg();
+    mRemainderBg = mCourse->remainderBg();
+    mErrorFg = mCourse->errorFg();
+    mErrorBg = mCourse->errorBg();
+
+    connect(ui->errorBGButton, SIGNAL(clicked()), this, SLOT(errorBg()));
+    connect(ui->errorFGButton, SIGNAL(clicked()), this, SLOT(errorFg()));
+    connect(ui->remainderBGButton, SIGNAL(clicked()), this, SLOT(remainderBg()));
+    connect(ui->remainderFGButton, SIGNAL(clicked()), this, SLOT(remainderFg()));
+
+    setLabelStyles();
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveValues()) );
 }
@@ -72,6 +85,50 @@ void EditTextStylesDialog::saveValues()
 {
     mCourse->setPromptStyle( ui->promptStyleEdit->text() );
     mCourse->setTextDirection( (Qt::LayoutDirection)ui->textDirectionCombo->currentIndex() );
+    mCourse->setRemainderFg(mRemainderFg);
+    mCourse->setRemainderBg(mRemainderBg);
+    mCourse->setErrorFg(mErrorFg);
+    mCourse->setErrorBg(mErrorBg);
+}
+
+void EditTextStylesDialog::errorFg()
+{
+    QColorDialog dlg( mErrorFg, this);
+    if( dlg.exec() )
+    {
+        mErrorFg = dlg.currentColor();
+        setLabelStyles();
+    }
+}
+
+void EditTextStylesDialog::errorBg()
+{
+    QColorDialog dlg( mErrorBg, this);
+    if( dlg.exec() )
+    {
+        mErrorBg = dlg.currentColor();
+        setLabelStyles();
+    }
+}
+
+void EditTextStylesDialog::remainderFg()
+{
+    QColorDialog dlg( mRemainderFg, this);
+    if( dlg.exec() )
+    {
+        mRemainderFg = dlg.currentColor();
+        setLabelStyles();
+    }
+}
+
+void EditTextStylesDialog::remainderBg()
+{
+    QColorDialog dlg( mRemainderBg, this);
+    if( dlg.exec() )
+    {
+        mRemainderBg = dlg.currentColor();
+        setLabelStyles();
+    }
 }
 
 QString EditTextStylesDialog::styleFromFontDialog(const QString & initial) const
@@ -101,4 +158,10 @@ QString EditTextStylesDialog::styleFromFontDialog(const QString & initial) const
     else {
         return "";
     }
+}
+
+void EditTextStylesDialog::setLabelStyles()
+{
+    ui->remainderLabel->setStyleSheet("color: " + mRemainderFg.name() + "; background-color: "+ mRemainderBg.name() +";");
+    ui->errorLabel->setStyleSheet("color: " + mErrorFg.name() + "; background-color: "+ mErrorBg.name() +";");
 }

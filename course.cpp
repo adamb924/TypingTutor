@@ -7,12 +7,20 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-Course::Course()
+Course::Course() :
+    mRemainderFg(0,0,155),
+    mRemainderBg(255,255,255),
+    mErrorFg(255,255,255),
+    mErrorBg(192,192,192)
 {
     mValid = true;
 }
 
-Course::Course(const QString &filename)
+Course::Course(const QString &filename) :
+    mRemainderFg(0,0,155),
+    mRemainderBg(255,255,255),
+    mErrorFg(255,255,255),
+    mErrorBg(192,192,192)
 {
     mValid = readXmlFile(filename);
 }
@@ -177,6 +185,11 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeAttribute("description-style", mDescriptionStyle );
     stream.writeAttribute("layout-direction", QString("%1").arg(mLayoutDirection) );
 
+    stream.writeAttribute("error-foreground", mErrorFg.name() );
+    stream.writeAttribute("error-background", mErrorBg.name() );
+    stream.writeAttribute("remainder-foreground", mRemainderFg.name() );
+    stream.writeAttribute("remainder-background", mRemainderBg.name() );
+
     stream.writeStartElement("course-description");
     stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
     stream.writeCharacters("");
@@ -250,6 +263,10 @@ bool Course::readXmlFile(const QString &filename)
                 && attr.hasAttribute("header-style")
                 && attr.hasAttribute("description-style")
                 && attr.hasAttribute("layout-direction")
+                && attr.hasAttribute("error-foreground")
+                && attr.hasAttribute("error-background")
+                && attr.hasAttribute("remainder-foreground")
+                && attr.hasAttribute("remainder-background")
                 )
         {
             mName = attr.value("name").toString();
@@ -258,6 +275,10 @@ bool Course::readXmlFile(const QString &filename)
             mHeaderStyle = attr.value("header-style").toString();
             mDescriptionStyle = attr.value("description-style").toString();
             mLayoutDirection = (Qt::LayoutDirection)attr.value("layout-direction").toInt();
+            mErrorFg = QColor( attr.value("error-foreground").toString() );
+            mErrorBg = QColor( attr.value("error-background").toString() );
+            mRemainderFg = QColor( attr.value("remainder-foreground").toString() );
+            mRemainderBg = QColor( attr.value("remainder-background").toString() );
         }
     }
 
@@ -387,6 +408,46 @@ QString Course::readHtml(QXmlStreamReader &xml)
     while (!xml.atEnd() && xml.name() != terminatingElement );
     return html;
 }
+QColor Course::errorBg() const
+{
+    return mErrorBg;
+}
+
+void Course::setErrorBg(const QColor &value)
+{
+    mErrorBg = value;
+}
+
+QColor Course::errorFg() const
+{
+    return mErrorFg;
+}
+
+void Course::setErrorFg(const QColor &value)
+{
+    mErrorFg = value;
+}
+
+QColor Course::remainderBg() const
+{
+    return mRemainderBg;
+}
+
+void Course::setRemainderBg(const QColor &value)
+{
+    mRemainderBg = value;
+}
+
+QColor Course::remainderFg() const
+{
+    return mRemainderFg;
+}
+
+void Course::setRemainderFg(const QColor &value)
+{
+    mRemainderFg = value;
+}
+
 
 Qt::LayoutDirection Course::textDirection() const
 {
