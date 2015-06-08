@@ -121,18 +121,22 @@ void PromptForm::updateTargetTextDisplay()
         if( matchLength > 0 )
         {
             QString remainderString = mTargetText.mid(matchLength);
-            if( targetHtml.at(targetHtml.length()-1).isLetterOrNumber() && remainderString.at(0).isLetterOrNumber() )
+            QChar first = targetHtml.at(targetHtml.length()-1);
+            QChar second = remainderString.at(0);
+            bool charactersWillJoin = first.isLetterOrNumber()
+                                        && second.isLetterOrNumber()
+                                        && ( first.joining() == QChar::Dual || first.joining() == QChar::OtherJoining );
+            if( charactersWillJoin )
             {
                 targetHtml += QChar(0x200D);
             }
-            targetHtml += "<font style='color: blue'>‍";
-            if( remainderString.at(0).isLetterOrNumber() )
+            targetHtml += "<font style='color: blue'>";
+            if( charactersWillJoin )
             {
                 targetHtml += QChar(0x200D);
             }
             targetHtml += remainderString;
             targetHtml += "</font>";
-
         }
         else
         {
