@@ -65,6 +65,9 @@ public:
     QColor errorBg() const;
     void setErrorBg(const QColor &value);
 
+    bool changed() const;
+    void setChanged(bool changed);
+
 private:
     bool readXmlFile(const QString & filename);
     QString readHtml( QXmlStreamReader &xml );
@@ -90,6 +93,8 @@ private:
 
     QColor mRemainderFg, mRemainderBg;
     QColor mErrorFg, mErrorBg;
+
+    bool mChanged;
 };
 
 #endif // COURSE_H

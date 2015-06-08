@@ -46,6 +46,9 @@ private slots:
 
     void itemClicked(const QModelIndex & index, const QModelIndex &previous = QModelIndex() );
 
+protected:
+    void closeEvent(QCloseEvent * event);
+
 private:
     void showOrHideDocksAndButtons(QModelIndex index = QModelIndex());
     bool isPrompt(const QModelIndex &index) const;

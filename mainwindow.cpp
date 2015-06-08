@@ -14,6 +14,8 @@
 #include <QtDebug>
 #include <QStandardItemModel>
 #include <QDataWidgetMapper>
+#include <QMessageBox>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -217,6 +219,7 @@ void MainWindow::editCourse()
 {
     CourseEditorWindow * editor = new CourseEditorWindow(mCourse, mModel);
     editor->show();
+    mCourse->setChanged(true);
 }
 
 void MainWindow::editKeyboard()
@@ -224,6 +227,7 @@ void MainWindow::editKeyboard()
     KeyboardEditorWindow * editor = new KeyboardEditorWindow(mCourse);
     editor->setStyles( mCourse->textEntryStyle(),  mCourse->promptStyle() );
     editor->show();
+    mCourse->setChanged(true);
 }
 
 void MainWindow::editTextStyles()
@@ -233,6 +237,7 @@ void MainWindow::editTextStyles()
     {
         setStyles();
         ui->promptPage->setCourse(mCourse);
+        mCourse->setChanged(true);
     }
 }
 
@@ -262,6 +267,15 @@ void MainWindow::itemClicked(const QModelIndex &index, const QModelIndex &previo
         ui->nextButton->setEnabled(true);
     }
     showOrHideDocksAndButtons(index);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if( mCourse != 0 && mCourse->changed() && QMessageBox::question(this, tr("Save your work?"), tr("Do you want to save the changes you made to the course?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes ) == QMessageBox::Yes )
+    {
+        saveCourse();
+    }
+    event->accept();
 }
 
 void MainWindow::showOrHideDocksAndButtons(QModelIndex index)

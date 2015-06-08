@@ -245,6 +245,8 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeEndElement(); // course
 
     stream.writeEndDocument();
+
+    setChanged(false);
 }
 
 bool Course::readXmlFile(const QString &filename)
@@ -416,6 +418,16 @@ QColor Course::errorBg() const
 void Course::setErrorBg(const QColor &value)
 {
     mErrorBg = value;
+}
+
+bool Course::changed() const
+{
+    return mChanged;
+}
+
+void Course::setChanged(bool changed)
+{
+    mChanged = changed;
 }
 
 QColor Course::errorFg() const
