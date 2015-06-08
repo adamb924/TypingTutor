@@ -22,7 +22,6 @@ PromptForm::PromptForm(QWidget *parent) :
 
     updateTargetTextDisplay();
     connect( ui->inputEdit, SIGNAL(textChanged()), this, SLOT(updateTargetTextDisplay()) );
-    connect( ui->inputEdit, SIGNAL(focusIn()), this, SLOT(updateTargetTextDisplay()));
     connect( this, SIGNAL(targetTextChanged()), this, SLOT(updateTargetText()));
 }
 
