@@ -50,9 +50,9 @@ private:
     Ui::PromptForm *ui;
     QString mTargetText;
     QString mEnteredText;
+    QDataWidgetMapper * mMapper;
     TargetHighlighter * mTargetHighlighter;
     const Course * mCourse;
-    QDataWidgetMapper * mMapper;
 };
 
 #endif // TEXTINPUTFORM_H
