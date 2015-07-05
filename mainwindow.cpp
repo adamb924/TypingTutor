@@ -154,6 +154,9 @@ void MainWindow::setupCourseLayout()
 
     QModelIndex index = mModel->index(0,0);
     selectIndex( index );
+
+    ui->progressDock->show();
+    ui->hintDock->show();
 }
 
 void MainWindow::setStyles()
