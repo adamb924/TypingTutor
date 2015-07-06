@@ -9,6 +9,10 @@
 #include "keyboard.h"
 
 class QXmlStreamReader;
+class QXmlStreamWriter;
+
+#include <QXmlStreamAttribute>
+#include <QXmlStreamAttributes>
 
 class Course
 {
@@ -51,6 +55,8 @@ public:
     Section * getSection(const Prompt * prompt);
 
     void writeXmlFile(const QString & filename);
+    void writeHtmlElement(QXmlStreamWriter &stream, const QString & elementName, QString html, const QXmlStreamAttributes & attributes = QXmlStreamAttributes() );
+    void writeHtmlElement(QXmlStreamWriter &stream, const QString & elementName, QString html, const QXmlStreamAttribute & attribute );
 
     Qt::LayoutDirection textDirection() const;
     void setTextDirection(Qt::LayoutDirection value);

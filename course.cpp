@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
+#include <QRegularExpression>
 
 Course::Course() :
     mRemainderFg(0,0,155),
@@ -201,41 +202,22 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeAttribute("remainder-foreground", mRemainderFg.name() );
     stream.writeAttribute("remainder-background", mRemainderBg.name() );
 
-    stream.writeStartElement("course-description");
-    stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
-    stream.writeCharacters("");
-    stream.device()->write( mDescription.toUtf8() );
-    stream.writeEndElement();
+    writeHtmlElement( stream, "course-description", mDescription );
 
-    stream.writeStartElement("course-conclusion");
-    stream.writeAttribute("header", mConclusionHeader);
-    stream.writeCharacters("");
-    stream.device()->write( mConclusionMessage.toUtf8() );
-    stream.writeEndElement();
+    writeHtmlElement( stream, "course-conclusion", mConclusionMessage, QXmlStreamAttribute("header", mConclusionHeader) );
 
     for(int i=0; i<mSections.count(); i++)
     {
         stream.writeStartElement("section");
         stream.writeAttribute("name", mSections.at(i)->name() );
 
-        stream.writeStartElement("section-description");
-        stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
-        stream.writeCharacters("");
-        stream.device()->write( mSections.at(i)->description().toUtf8() );
-        stream.writeEndElement();
+        writeHtmlElement( stream, "section-description", mSections.at(i)->description() );
 
         for(int j=0; j<mSections.at(i)->prompts()->count(); j++)
         {
             stream.writeStartElement("prompt");
-
-            stream.writeStartElement("prompt-description");
-            stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
-            stream.writeCharacters("");
-            stream.device()->write( mSections.at(i)->prompts()->at(j)->description().toUtf8() );
-            stream.writeEndElement();
-
+            writeHtmlElement( stream, "prompt-description", mSections.at(i)->prompts()->at(j)->description());
             stream.writeTextElement("target-text", mSections.at(i)->prompts()->at(j)->targetText() );
-
             stream.writeEndElement();
         }
         stream.writeEndElement();
@@ -258,6 +240,25 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeEndDocument();
 
     setChanged(false);
+}
+
+void Course::writeHtmlElement(QXmlStreamWriter & stream, const QString &elementName, QString html, const QXmlStreamAttributes & attributes)
+{
+    stream.writeStartElement(elementName);
+    stream.writeAttribute("xmlns","http://www.w3.org/1999/xhtml");
+    stream.writeAttributes(attributes);
+    stream.writeCharacters("");
+    QRegularExpression filter("[ ]?style=\"[^\"]*\"");
+    html.replace(filter, "");
+    stream.device()->write( html.toUtf8() );
+    stream.writeEndElement();
+}
+
+void Course::writeHtmlElement(QXmlStreamWriter &stream, const QString &elementName, QString html, const QXmlStreamAttribute &attribute)
+{
+    QXmlStreamAttributes attr;
+    attr.insert(0, attribute);
+    writeHtmlElement(stream, elementName, html, attr);
 }
 
 bool Course::readXmlFile(const QString &filename)
@@ -393,11 +394,20 @@ QString Course::readHtml(QXmlStreamReader &xml)
     do
     {
           xml.readNext();
+          QXmlStreamAttributes attr = xml.attributes();
+          QXmlStreamAttributes filtered;
           switch( xml.tokenType() )
           {
           case QXmlStreamReader::StartElement:
               writer.writeStartElement(xml.name().toString());
-              writer.writeAttributes(xml.attributes());
+              for(int i=0; i<attr.count(); i++)
+              {
+                  if( attr.at(i).name() != "style" )
+                  {
+                      filtered.insert(0, attr.at(i) );
+                  }
+              }
+              writer.writeAttributes(filtered);
               break;
           case QXmlStreamReader::EndElement:
               writer.writeEndElement();
