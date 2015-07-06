@@ -80,6 +80,11 @@ QString Course::descriptionStyle() const
     return mDescriptionStyle;
 }
 
+QString Course::navigationPaneStyle() const
+{
+    return mNavigationPaneStyle;
+}
+
 void Course::setTextEntryStyle(const QString &str)
 {
     mTextEntryStyle = str;
@@ -98,6 +103,11 @@ void Course::setHeaderStyle(const QString &str)
 void Course::setDescriptionStyle(const QString &str)
 {
     mDescriptionStyle = str;
+}
+
+void Course::setNavigationPaneStyle(const QString &str)
+{
+    mNavigationPaneStyle = str;
 }
 
 const Keyboard *Course::keyboard() const
@@ -183,6 +193,7 @@ void Course::writeXmlFile(const QString &filename)
     stream.writeAttribute("prompt-style", mPromptStyle );
     stream.writeAttribute("header-style", mHeaderStyle );
     stream.writeAttribute("description-style", mDescriptionStyle );
+    stream.writeAttribute("navigation-pane-style", mNavigationPaneStyle );
     stream.writeAttribute("layout-direction", QString("%1").arg(mLayoutDirection) );
 
     stream.writeAttribute("error-foreground", mErrorFg.name() );
@@ -259,29 +270,28 @@ bool Course::readXmlFile(const QString &filename)
     if( xml.name() == "course" )
     {
         QXmlStreamAttributes  attr = xml.attributes();
-        if( attr.hasAttribute("name")
-                && attr.hasAttribute("text-entry-style")
-                && attr.hasAttribute("prompt-style")
-                && attr.hasAttribute("header-style")
-                && attr.hasAttribute("description-style")
-                && attr.hasAttribute("layout-direction")
-                && attr.hasAttribute("error-foreground")
-                && attr.hasAttribute("error-background")
-                && attr.hasAttribute("remainder-foreground")
-                && attr.hasAttribute("remainder-background")
-                )
-        {
+        if( attr.hasAttribute("name") )
             mName = attr.value("name").toString();
+        if( attr.hasAttribute("text-entry-style") )
             mTextEntryStyle = attr.value("text-entry-style").toString();
+        if( attr.hasAttribute("prompt-style") )
             mPromptStyle = attr.value("prompt-style").toString();
+        if( attr.hasAttribute("header-style") )
             mHeaderStyle = attr.value("header-style").toString();
+        if( attr.hasAttribute("description-style") )
             mDescriptionStyle = attr.value("description-style").toString();
+        if( attr.hasAttribute("navigation-pane-style") )
+            mNavigationPaneStyle = attr.value("navigation-pane-style").toString();
+        if( attr.hasAttribute("layout-direction") )
             mLayoutDirection = (Qt::LayoutDirection)attr.value("layout-direction").toInt();
+        if( attr.hasAttribute("error-foreground") )
             mErrorFg = QColor( attr.value("error-foreground").toString() );
+        if( attr.hasAttribute("error-background") )
             mErrorBg = QColor( attr.value("error-background").toString() );
+        if( attr.hasAttribute("remainder-foreground") )
             mRemainderFg = QColor( attr.value("remainder-foreground").toString() );
+        if( attr.hasAttribute("remainder-background") )
             mRemainderBg = QColor( attr.value("remainder-background").toString() );
-        }
     }
 
     xml.readNextStartElement();

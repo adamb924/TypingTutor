@@ -29,11 +29,13 @@ public:
     QString promptStyle() const;
     QString headerStyle() const;
     QString descriptionStyle() const;
+    QString navigationPaneStyle() const;
 
     void setTextEntryStyle(const QString & str);
     void setPromptStyle(const QString & str);
     void setHeaderStyle(const QString & str);
     void setDescriptionStyle(const QString & str);
+    void setNavigationPaneStyle(const QString & str);
 
     const Keyboard *keyboard() const;
     Keyboard *keyboard();
@@ -82,6 +84,8 @@ private:
 
     QString mHeaderStyle;
     QString mDescriptionStyle;
+
+    QString mNavigationPaneStyle;
 
     bool mValid;
 

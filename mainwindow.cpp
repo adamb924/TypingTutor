@@ -169,6 +169,7 @@ void MainWindow::setStyles()
     ui->headerLabel->setStyleSheet( mCourse->headerStyle() );
     ui->descriptionLabel->setStyleSheet( mCourse->descriptionStyle() );
     ui->hintLabel->setStyleSheet(mCourse->promptStyle());
+    ui->treeView->setStyleSheet( mCourse->navigationPaneStyle() );
 }
 
 QModelIndex MainWindow::selectedOrFirst() const
@@ -238,8 +239,8 @@ void MainWindow::editTextStyles()
     EditTextStylesDialog dialog(mCourse);
     if( dialog.exec() == QDialog::Accepted )
     {
-        setStyles();
         ui->promptPage->setCourse(mCourse);
+        setStyles();
         mCourse->setChanged(true);
     }
 }

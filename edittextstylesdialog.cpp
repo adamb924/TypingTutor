@@ -17,6 +17,7 @@ EditTextStylesDialog::EditTextStylesDialog(Course *course, QWidget *parent) :
     ui->promptStyleEdit->setText( mCourse->promptStyle() );
     ui->headerStyleEdit->setText( mCourse->headerStyle() );
     ui->descriptionStyleEdit->setText( mCourse->descriptionStyle() );
+    ui->paneStyleEdit->setText( mCourse->navigationPaneStyle() );
     ui->textEntryStyleEdit->setText( mCourse->textEntryStyle() );
     ui->textDirectionCombo->setCurrentIndex( (int)mCourse->textDirection() );
 
@@ -24,6 +25,7 @@ EditTextStylesDialog::EditTextStylesDialog(Course *course, QWidget *parent) :
     connect(ui->headerStyleButton, SIGNAL(clicked()), this, SLOT(chooseHeaderStyle()) );
     connect(ui->descriptionStyleButton, SIGNAL(clicked()), this, SLOT(chooseDescriptionStyle()) );
     connect(ui->textEntryStyleButton, SIGNAL(clicked()), this, SLOT(chooseTextEntryStyle()) );
+    connect(ui->paneStyleButton, SIGNAL(clicked(bool)), this, SLOT(choosePaneStyle()) );
 
     mRemainderFg = mCourse->remainderFg();
     mRemainderBg = mCourse->remainderBg();
@@ -81,10 +83,22 @@ void EditTextStylesDialog::chooseHeaderStyle()
     }
 }
 
+void EditTextStylesDialog::choosePaneStyle()
+{
+    QString style = styleFromFontDialog( ui->paneStyleEdit->text() );
+    if( !style.isEmpty() )
+    {
+        ui->paneStyleEdit->setText( style );
+    }
+}
+
 void EditTextStylesDialog::saveValues()
 {
     mCourse->setPromptStyle( ui->promptStyleEdit->text() );
     mCourse->setTextDirection( (Qt::LayoutDirection)ui->textDirectionCombo->currentIndex() );
+    mCourse->setHeaderStyle( ui->headerStyleEdit->text() );
+    mCourse->setDescriptionStyle( ui->descriptionStyleEdit->text() );
+    mCourse->setNavigationPaneStyle( ui->paneStyleEdit->text() );
     mCourse->setRemainderFg(mRemainderFg);
     mCourse->setRemainderBg(mRemainderBg);
     mCourse->setErrorFg(mErrorFg);

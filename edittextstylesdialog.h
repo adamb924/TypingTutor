@@ -23,6 +23,7 @@ private slots:
     void chooseTextEntryStyle();
     void chooseDescriptionStyle();
     void chooseHeaderStyle();
+    void choosePaneStyle();
     void saveValues();
 
     void errorFg();
