@@ -69,7 +69,8 @@ Qt is a cross-platform framework, so there is the possibility for using this on 
 I build in Windows with this, which assumes that Qt is installed and visible in your path:
 
 ```
-qmake -config release mingw32-make
+qmake -config release
+mingw32-make
 ```
 
 Of course your system would have something different from “mingw32-make”—probably just “make”—if you are not building from Windows using MinGW.
